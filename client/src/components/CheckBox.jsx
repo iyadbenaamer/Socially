@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { motion } from "framer-motion";
 
 import { ReactComponent as SingleTickIcon } from "assets/icons/single-tick.svg";
