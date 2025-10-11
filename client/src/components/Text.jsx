@@ -35,6 +35,7 @@ const Text = (props) => {
     } else if (type === "reply") {
       requestUrl = `reply/edit?userId=${postCreatorId}&postId=${postId}&commentId=${commentId}&replyId=${replyId}`;
     }
+
     await axiosClient
       .patch(
         requestUrl,
