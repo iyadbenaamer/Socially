@@ -101,7 +101,7 @@ const DropZone = (props) => {
             <button
               onClick={() => input.current.click()}
               disabled={files.length >= MAX_FILES}
-              className={`h-[50px] w-[50px] rounded-xl flex items-center justify-center transition-colors ${
+              className={`h-[40px] w-[40px] rounded-3xl flex items-center justify-center transition-colors ${
                 files.length >= MAX_FILES
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[var(--primary-color)] hover:brightness-110"

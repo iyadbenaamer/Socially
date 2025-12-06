@@ -25,7 +25,7 @@ const Delete = () => {
     await axiosClient
       .delete(`post/delete?postId=${postId}`)
       .then(() => {
-        dispatch(setShowMessage({ message: "Post deleted.", type: "info" }));
+        dispatch(setShowMessage({ message: "Post is deleted.", type: "info" }));
         if (location.pathname.startsWith("/post")) {
           window.history.back();
         } else {

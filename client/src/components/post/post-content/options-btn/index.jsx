@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import useCloseWidget from "hooks/useCloseWidget";
@@ -52,7 +52,7 @@ const OptionsBtn = ({ setIsModifying }) => {
       {/* Button to toggle the dropdown menu */}
       <button
         aria-label="post options"
-        className={`aspect-square w-10 flex justify-center items-center icon transition cursor-pointer ${buttonThemeClasses}`}
+        className={`aspect-square w-7 p-1 flex justify-center items-center icon transition cursor-pointer ${buttonThemeClasses}`}
         style={{ borderRadius: "50%" }}
         onClick={() => setIsOpen((prev) => !prev)}
       >
@@ -68,6 +68,10 @@ const OptionsBtn = ({ setIsModifying }) => {
           {isOwner && (
             <div onClick={() => setIsOpen(false)}>
               <Delete /> {/* Deletes the post */}
+            </div>
+          )}
+          {isOwner && (
+            <div onClick={() => setIsOpen(false)}>
               <Edit
                 setIsModifying={setIsModifying}
                 id={postId}

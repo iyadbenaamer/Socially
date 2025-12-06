@@ -51,18 +51,18 @@ export const Post = (props) => {
       }}
     >
       <div
-        className={`w-full bg-200 rounded-xl shadow-md ${
+        className={`w-full bg-200 sm:rounded-xl shadow-md ${
           theme === "light" ? "border" : ""
         }`}
       >
-        <div className="flex flex-col bg-200 rounded-xl w-full pt-3 pb-2">
+        <div className="flex flex-col bg-200 sm:rounded-xl w-full pt-4 pb-2">
           <PostContent />
           {post.sharedPost && <SharedPost post={post.sharedPost} />}
           <ReactionsBar />
         </div>
         {showComments && (
           <div
-            className={`flex flex-col gap-4 p-3 items-start ${
+            className={`flex flex-col gap-4 p-2 items-start ${
               theme === "dark" ? "border-t-[#ffffff0f]" : "border-t-[#0000000d]"
             } border-t`}
           >
@@ -72,7 +72,7 @@ export const Post = (props) => {
                 <AddComment type="comment" />
               )}
             {post.isCommentsDisabled && profile?._id !== post.creatorId && (
-              <div className="text-center p-4 bg-300 rounded-xl w-full">
+              <div className="text-center p-4 bg-300 sm:rounded-xl w-full">
                 {profile && profile._id === creatorId
                   ? "You"
                   : "The post creator"}{" "}

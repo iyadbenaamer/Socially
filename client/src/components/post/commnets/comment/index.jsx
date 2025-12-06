@@ -15,6 +15,7 @@ import convertToUnit from "utils/convertToUnit";
 
 import { ReactComponent as CommentIcon } from "assets/icons/comments.svg";
 import HoverWrapper from "components/user-hover-card/HoverWrapper";
+import { useSelector } from "react-redux";
 
 export const CommentContext = createContext();
 
@@ -52,15 +53,19 @@ const Comment = (props) => {
       <div className="flex flex-col gap-2 rounded-xl items-start justify-start">
         <div className="flex items-center gap-2">
           <div className="flex gap-2 items-start">
-            <span className="w-12">
+            <div className="w-10 sm:w-12">
               <UserPicture profile={profile} />
-            </span>
+            </div>
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`bg-300 rounded-xl shadow-md w-fit px-3 py-2 min-w-24 min-h-[68px]`}
+                      className={`${
+                        text
+                          ? "bg-300 rounded-2xl shadow-md px-3 py-2"
+                          : "min-w-36"
+                      } max-w-[240px] sm:max-w-sm lg:max-w-md`}
                     >
                       <HoverWrapper profile={profile}>
                         <Link
@@ -88,7 +93,7 @@ const Comment = (props) => {
                     />
                   </div>
                   <Media>
-                    <div className="rounded-xl overflow-hidden w-fit">
+                    <div className="rounded-xl overflow-hidden max-w-80">
                       {file && file.fileType === "photo" && (
                         <img src={file.path} alt="" />
                       )}
@@ -111,7 +116,7 @@ const Comment = (props) => {
                   onClick={() => setShowReplies(!showReplies)}
                   className="flex items-center gap-1 text-hovered transition text-slate-400"
                 >
-                  <CommentIcon width={24} />
+                  <CommentIcon width={16} />
                   {convertToUnit(repliesCount)}
                 </button>
                 <span className="block text-xs text-slate-400">{time}</span>

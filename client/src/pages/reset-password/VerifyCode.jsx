@@ -127,7 +127,7 @@ const VerifyCode = () => {
           </span>
         )}
         <span className="text-gray-400 text-xs mt-2">
-          Code expires in 1 minute.
+          Code expires in 10 minutes.
         </span>
       </div>
     </div>

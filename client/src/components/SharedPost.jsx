@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 
 import Slider from "./slider";
 import CreatorInfo from "./post/post-content/CreatorInfo";
+import Text from "./Text";
 
 const SharedPost = (props) => {
   const {
@@ -31,8 +32,8 @@ const SharedPost = (props) => {
               postId={id}
             />
           </div>
-          <div className="px-1 sm:px-4 flex flex-col gap-3">
-            <div className="p-1 my-2">{text}</div>
+          <div className="px-1 py-3 sm:px-4 flex flex-col gap-3">
+            <Text text={text} type="post" />
           </div>
           {files?.length > 0 && <Slider files={files} />}
         </div>

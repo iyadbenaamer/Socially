@@ -52,7 +52,7 @@ const OptionsBtn = ({ commentId, commentCreatorId, setIsModifying }) => {
       {/* Button to toggle the options menu */}
       <button
         aria-label="comment options"
-        className={`aspect-square w-10 flex justify-center items-center icon transition cursor-pointer ${buttonThemeClass}`}
+        className={`aspect-square w-7 p-1 flex justify-center items-center icon transition cursor-pointer ${buttonThemeClass}`}
         style={{ borderRadius: "50%" }}
         onClick={() => setIsOpen((prev) => !prev)}
       >

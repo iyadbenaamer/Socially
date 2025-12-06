@@ -10,6 +10,8 @@ import OptionsBtn from "./options-btn";
 import useGetTime from "hooks/useGetTime";
 
 import { PostContext } from "components/post";
+import { useSelector } from "react-redux";
+import HoverWrapper from "components/user-hover-card/HoverWrapper";
 
 const Reply = (props) => {
   const {
@@ -42,13 +44,20 @@ const Reply = (props) => {
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex items-center">
-          <div className="bg-300 rounded-xl shadow-md px-3 py-2 w-fit">
-            <Link
-              to={`/profile/${profile.username}`}
-              className="hover:underline"
-            >
-              {profile.firstName} {profile.lastName}
-            </Link>
+          <div
+            className={`${
+              text ? "bg-300 rounded-2xl shadow-md px-3 py-2" : "min-w-36"
+            } max-w-[240px] sm:max-w-sm lg:max-w-md`}
+          >
+            <HoverWrapper profile={profile}>
+              <Link
+                to={`/profile/${profile.username}`}
+                className="hover:underline"
+              >
+                {profile.firstName} {profile.lastName}
+              </Link>
+            </HoverWrapper>
+
             <Text
               postCreatorId={post.creatorId}
               type="reply"
@@ -68,7 +77,7 @@ const Reply = (props) => {
           />
         </div>
         <Media>
-          <div className="rounded-xl overflow-hidden w-fit">
+          <div className="rounded-xl overflow-hidden max-w-80">
             {file && file.fileType === "photo" && (
               <img src={file.path} alt="" />
             )}

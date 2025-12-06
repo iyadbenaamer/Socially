@@ -20,7 +20,7 @@ const Text = (props) => {
   const profile = useSelector((state) => state.profile);
 
   const [text, setText] = useState("");
-  const [modifiedText, setModifiedText] = useState(null);
+  const [modifiedText, setModifiedText] = useState(props.text);
   const [originalText, setOriginalText] = useState(props.text);
 
   const dispatch = useDispatch();
@@ -39,7 +39,7 @@ const Text = (props) => {
     await axiosClient
       .patch(
         requestUrl,
-        { text: modifiedText },
+        { text: modifiedText.trim() },
         { headers: { Authorization: profile.token } }
       )
       .then((response) => {
@@ -64,7 +64,7 @@ const Text = (props) => {
         }
       })
       .finally(() => {
-        setModifiedText(null);
+        setModifiedText(modifiedText.trim());
         setIsModifying(false);
       });
   };
@@ -83,13 +83,18 @@ const Text = (props) => {
       {isModifying ? (
         <>
           <textarea
-            defaultValue={originalText}
             autoFocus
             ref={textArea}
             dir="auto"
-            onChange={(e) =>
-              setModifiedText(e.target.value.trimStart().trimEnd())
-            }
+            value={modifiedText}
+            onChange={(e) => {
+              const text = e.target.value;
+              if (text.length <= 40000 && type == "post") {
+                setModifiedText(text);
+              } else if (text.length <= 10000 && type !== "post") {
+                setModifiedText(text);
+              }
+            }}
           ></textarea>
           <div className="self-end flex gap-3">
             <span>
@@ -99,7 +104,7 @@ const Text = (props) => {
             </span>
             <span>
               <SubmitBtn
-                disabled={!modifiedText || modifiedText === text}
+                disabled={!modifiedText || modifiedText === originalText}
                 onClick={editText}
               >
                 Edit
@@ -109,12 +114,15 @@ const Text = (props) => {
         </>
       ) : (
         <div className="flex flex-col">
-          <pre dir="auto" className="font-[inherit]">
+          <pre
+            dir="auto"
+            className="font-[inherit] text-ellipsis text-wrap break-words"
+          >
             {text}
           </pre>
           {text.length > 100 && originalText.length !== text.length && (
             <button
-              className="hover:underline w-fit"
+              className="link w-fit"
               onClick={() => setText(originalText)}
             >
               show more
@@ -122,7 +130,7 @@ const Text = (props) => {
           )}
           {text.length > 100 && text.length === originalText.length && (
             <button
-              className="hover:underline w-fit"
+              className="link w-fit"
               onClick={() => setText(originalText.slice(0, 100).concat(" ..."))}
             >
               show less

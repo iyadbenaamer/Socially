@@ -3,11 +3,9 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import Dialog from "components/dialog";
-import UserPicture from "components/UserPicture";
 import Form from "./form";
 
-import { ReactComponent as PhotoIcon } from "assets/icons/photo.svg";
-import { ReactComponent as VideoIcon } from "assets/icons/video.svg";
+import { ReactComponent as AddIcon } from "assets/icons/edit.svg";
 
 const CreatePost = () => {
   const profile = useSelector((state) => state.profile);
@@ -19,52 +17,25 @@ const CreatePost = () => {
 
   const theme = useSelector((state) => state.settings.theme);
 
+  /* the component will be rendered only on home page and the user's profile */
+  if (usernameParam && profile?.username !== usernameParam) return;
+
   return (
-    <>
-      {/* the component will be rendered only on home page and the user's profile */}
-      {(!usernameParam || profile?.username === usernameParam) && (
-        <section
-          className={`create-post bg-200 w-full px-4 pt-5 pb-1 rounded-xl flex flex-col gap-3 shadow-md ${
-            theme === "light" ? "border" : ""
-          }`}
-        >
-          <div className="flex gap-3 items-center">
-            <span className="w-12">
-              <UserPicture profile={profile} />
-            </span>
-            <div
-              onClick={() => setIsOpened(!isOpened)}
-              className="cursor-pointer h-[2.75rem] text-ellipsis overflow-clip rounded-xl bg-300 p-2 w-full shadow-md"
-              style={{ lineHeight: 2 }}
-            >
-              Share something...
-            </div>
-          </div>
-          <div className="flex items-center">
-            <div
-              onClick={() => setIsOpened(!isOpened)}
-              className="p-3 flex items-center gap-3 cursor-pointer w-full justify-center"
-            >
-              <PhotoIcon className="w-7" /> Photo
-            </div>
-            <span className={`bg-inverse h-7 w-[1px] opacity-10`}></span>
-            <div
-              onClick={() => setIsOpened(!isOpened)}
-              className="p-3 flex items-center gap-3 cursor-pointer w-full justify-center"
-            >
-              <VideoIcon className="w-7" /> Video
-            </div>
-            <Dialog
-              isOpened={isOpened}
-              setIsOpened={setIsOpened}
-              preventClickOutside={true}
-            >
-              <Form setIsOpened={setIsOpened} data={data} setData={setData} />
-            </Dialog>
-          </div>
-        </section>
-      )}
-    </>
+    <div>
+      <button
+        onClick={() => setIsOpened(true)}
+        className="create-post bg-primary p-2 rounded-3xl shadow-md z-[1000] fixed right-3 sm:right-16 bottom-20 sm:bottom-16 w-12 sm:w-14"
+      >
+        <AddIcon className="text-white" />
+      </button>
+      <Dialog
+        isOpened={isOpened}
+        setIsOpened={setIsOpened}
+        preventClickOutside={true}
+      >
+        <Form setIsOpened={setIsOpened} data={data} setData={setData} />
+      </Dialog>
+    </div>
   );
 };
 

@@ -31,7 +31,9 @@ const Delete = ({ commentId }) => {
           ...prev,
           commentsCount: prev.commentsCount - 1,
         }));
-        dispatch(setShowMessage({ message: "Comment deleted.", type: "info" }));
+        dispatch(
+          setShowMessage({ message: "Comment is deleted.", type: "info" })
+        );
       })
       .catch((err) => {
         if (err.response) {

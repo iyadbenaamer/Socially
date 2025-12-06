@@ -34,7 +34,7 @@ const PostContent = () => {
           <OptionsBtn setIsModifying={setIsModifying} />
         </div>
       </div>
-      <div className="flex flex-col w-full px-1 py-4 sm:px-4">
+      <div className="flex flex-col w-full py-4 sm:px-4">
         <div className="py-3 px-1">
           <Text
             postCreatorId={creatorId}

@@ -50,7 +50,7 @@ const OptionsBtn = ({ commentId, replyId, replyCreatorId, setIsModifying }) => {
       {/* Icon button to open/close the options menu */}
       <button
         aria-label="comment options"
-        className={`aspect-square w-10 flex justify-center items-center icon transition cursor-pointer ${buttonThemeClasses}`}
+        className={`aspect-square w-7 p-1 flex justify-center items-center icon transition cursor-pointer ${buttonThemeClasses}`}
         style={{ borderRadius: "50%" }}
         onClick={() => setIsOpen((prev) => !prev)}
       >

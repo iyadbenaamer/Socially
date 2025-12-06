@@ -26,7 +26,7 @@ const Post = () => {
   }, [postId]);
 
   return (
-    <div className="container lg:w-1/2 md:w-2/3 pt-5 px-2 pb-28">
+    <div className="container lg:w-1/2 md:w-2/3 pt-5 pb-28">
       {post && <PostComponent post={post} showComments />}
     </div>
   );

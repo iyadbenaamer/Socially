@@ -107,7 +107,7 @@ const Slider = (props) => {
     <>
       <div
         ref={containerRef}
-        className="relative w-full rounded-2xl overflow-hidden mb-3 flex items-center justify-center"
+        className="relative w-full sm:rounded-xl overflow-hidden mb-3 flex items-center justify-center"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         role="group"

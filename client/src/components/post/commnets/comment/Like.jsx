@@ -95,7 +95,7 @@ const Like = (props) => {
               }
             }}
           ></div>
-          <div className="w-8 scale-[3]">
+          <div className="w-7 scale-[3]">
             {isLiked && !firstLoad ? (
               <Lottie options={options} ariaRole="" />
             ) : (

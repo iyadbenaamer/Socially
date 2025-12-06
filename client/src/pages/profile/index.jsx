@@ -37,7 +37,7 @@ const Profile = () => {
 
   return (
     <ProfileContext.Provider value={{ ...profile, setProfile }}>
-      <div className="container relative center px-2">
+      <div className="container relative center">
         <div className="mb-20">
           <CoverPicture />
           {profile && (
