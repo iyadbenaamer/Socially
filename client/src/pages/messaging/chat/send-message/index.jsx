@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 import axiosClient from "utils/AxiosClient";
 import { socket } from "hooks/useHandleSocket";
 
-import { ReactComponent as PhotoIcon } from "assets/icons/photo.svg";
-import { ReactComponent as AddCommentIcon } from "assets/icons/create-comment.svg";
-import { ReactComponent as CloseIcon } from "assets/icons/cross.svg";
+import PhotoIcon from "assets/icons/photo.svg?react";
+import AddCommentIcon from "assets/icons/create-comment.svg?react";
+import CloseIcon from "assets/icons/cross.svg?react";
 
 const SendMessage = () => {
   const { conversationId } = useParams();
@@ -35,7 +35,7 @@ const SendMessage = () => {
       axiosClient
         .post(
           `message/send?conversationId=${conversationId}&replyTo=${replyTo}`,
-          formData
+          formData,
         )
         .catch((err) => {});
     }
@@ -54,9 +54,6 @@ const SendMessage = () => {
     textArea.current.focus();
     // this resets text once the conversation changes
     setText("");
-    if (textArea.current) {
-      textArea.current.value = "";
-    }
   }, [conversationId, textArea.current]);
 
   return (
@@ -85,6 +82,7 @@ const SendMessage = () => {
         <textarea
           ref={textArea}
           autoFocus
+          value={text}
           onKeyDown={(e) => {
             if (!text) {
               return;
@@ -103,9 +101,12 @@ const SendMessage = () => {
           className="comment-input h-6 w-4/5"
           placeholder={"Message"}
           onChange={(e) => {
-            const input = e.target.value.trimStart();
+            const input = e.target.value;
             if (input) {
               setIsTyping(true);
+            }
+            if (input.length > 100000) {
+              return;
             }
             setText(input);
           }}
@@ -124,7 +125,7 @@ const SendMessage = () => {
               if (e.target.files[0]) {
                 reader.readAsDataURL(e.target.files[0]);
                 reader.addEventListener("load", (e) =>
-                  setFile(e.currentTarget.result)
+                  setFile(e.currentTarget.result),
                 );
                 setMedia(e.target.files[0]);
               }

@@ -59,7 +59,7 @@ const Form = (props) => {
       });
   };
   useEffect(() => {
-    if (data.text != "") {
+    if (data.text != "" && data.text.length <= 40000) {
       setIsValidPost(true);
     } else {
       setIsValidPost(false);
@@ -76,7 +76,10 @@ const Form = (props) => {
         name="text"
         placeholder="Type anything about this...."
         onChange={(e) => {
-          setData((prev) => ({ ...prev, text: e.target.value }));
+          const text = e.target.value;
+          if (text.length <= 40000) {
+            setData((prev) => ({ ...prev, text: e.target.value }));
+          }
         }}
       />
       <SubmitBtn disabled={!isValidPost} onClick={submit}>

@@ -226,7 +226,8 @@ export const getLikes = async (req, res) => {
 export const add = async (req, res) => {
   try {
     const { user, post } = req;
-    const { text } = req.body;
+    let { text } = req.body;
+    text = text.trim();
     const { fileInfo } = req;
     const profile = await Profile.findById(user.id).select(
       "_id firstName lastName username profilePicPath bio location gender lastSeenAt"
@@ -234,6 +235,9 @@ export const add = async (req, res) => {
     // if the comment disabled then only the post author can comment
     if (post.isCommentsDisabled && user.id !== post.creatorId.toString()) {
       return res.status(409).json({ message: "Comments are disabled." });
+    }
+    if (text.length > 10000) {
+      return res.status(400).json({ message: "Comment text is too long." });
     }
     if (!(text || fileInfo)) {
       return res.status(400).json({ message: "Comment cannot be empty." });
@@ -321,19 +325,25 @@ export const add = async (req, res) => {
 
 export const edit = async (req, res) => {
   try {
-    const { text } = req.body;
+    let { text } = req.body;
+    text = text.trim();
     const { user, comment } = req;
-    if (text) {
-      if (comment.creatorId?.toString() === user.id) {
-        comment.text = text;
-        await comment.save();
-        return res.status(200).json(comment);
-      } else {
-        return res.status(401).send("Unauthorized");
-      }
-    } else {
-      return res.status(409).json({ message: "comment cannot be empty" });
+
+    if (comment.creatorId?.toString() !== user.id) {
+      return res.status(401).send("Unauthorized");
     }
+
+    if (text.length > 10000) {
+      return res.status(400).json({ message: "Comment text is too long." });
+    }
+
+    if (!text) {
+      return res.status(400).json({ message: "Comment cannot be empty." });
+    }
+
+    comment.text = text;
+    await comment.save();
+    return res.status(200).json(comment);
   } catch (err) {
     return handleError(err, res);
   }
@@ -438,18 +448,20 @@ export const likeToggle = async (req, res) => {
 
 export const deleteComment = async (req, res) => {
   try {
-    const { user, post, comment } = req;
+    const { admin, user, post, comment } = req;
     /*
     the comment can be deleted ether by the comment
-    creator or the post creator
+    creator or the post creator or by admins
     */
-    if (
-      !(
-        user.id === comment.creatorId?.toString() ||
-        user.id === post.creatorId?.toString()
-      )
-    ) {
-      return res.status(401).send("Unauthorized");
+    if (!admin) {
+      if (
+        !(
+          user?.id === comment.creatorId?.toString() ||
+          user?.id === post.creatorId?.toString()
+        )
+      ) {
+        return res.status(401).send("Unauthorized");
+      }
     }
 
     const postCreator = await User.findById(post.creatorId);
@@ -477,7 +489,7 @@ export const deleteComment = async (req, res) => {
     await CommentLike.deleteMany({ postId: post.id });
     // finally delete the comment
     await comment.deleteOne();
-    return res.status(200).json({ message: "Comment deleted." });
+    return res.status(200).json({ message: "Comment is deleted." });
   } catch (err) {
     return handleError(err, res);
   }

@@ -23,8 +23,15 @@ const { ObjectId } = Types;
 export const create = async (req, res) => {
   try {
     const { id } = req.user;
-    const { text, location } = req.body;
+    let { text, location } = req.body;
     const { filesInfo } = req;
+    text = text.trim();
+    if (!text && !filesInfo) {
+      return res.status(400).json({ message: "Post cannot be empty." });
+    }
+    if (text.length > 40000) {
+      return res.status(400).json({ message: "Post text is too long." });
+    }
 
     const profile = await Profile.findById(id);
     const post = await Post.create({
@@ -33,12 +40,6 @@ export const create = async (req, res) => {
       files: filesInfo,
       createdAt: Date.now(),
       location: location?.trim(),
-    });
-
-    await View.create({
-      userId: id,
-      postId: post._id,
-      createdAt: Date.now(),
     });
 
     /*
@@ -53,7 +54,7 @@ export const create = async (req, res) => {
       profile,
       commentsCount: 0,
       likesCount: 0,
-      views: 1,
+      views: 0,
       isLiked: false,
       isSaved: false,
       isViewed: true,
@@ -69,6 +70,7 @@ export const share = async (req, res) => {
     const { user } = req;
     let { postId } = req.query;
     let { text, location } = req.body;
+    text = text.trim();
     const { media } = req.files;
 
     const profile = await Profile.findById(user.id);
@@ -96,6 +98,13 @@ export const share = async (req, res) => {
         }
       });
     }
+
+    if (!text && filesInfo.length === 0) {
+      return res.status(400).json({ message: "Post cannot be empty." });
+    }
+    if (text.length > 40000) {
+      return res.status(400).json({ message: "Post text is too long." });
+    }
     /*
     if who shared the post is NOT the same as the post creator 
     then a notification will be created.
@@ -115,7 +124,7 @@ export const share = async (req, res) => {
 
         const post = await Post.create({
           creatorId: user.id,
-          text: text.trim(),
+          text,
           createdAt: Date.now(),
           location: location.trim(),
           sharedPost: {
@@ -131,7 +140,7 @@ export const share = async (req, res) => {
         notification = await getNotification(notification.id);
         // sending the notification by web socket
         const socketIdsList = getOnlineUsers().get(
-          sharedPost.creatorId.toString()
+          sharedPost.creatorId.toString(),
         );
         if (socketIdsList) {
           socketIdsList.map((socketId) => {
@@ -158,7 +167,7 @@ export const share = async (req, res) => {
     }
     const post = await Post.create({
       creatorId: user.id,
-      text: text.trim(),
+      text,
       createdAt: Date.now(),
       location: location.trim(),
       sharedPost: {
@@ -636,6 +645,9 @@ export const edit = async (req, res) => {
 export const setViewed = async (req, res) => {
   try {
     const { user, post } = req;
+    if (post.creatorId.toString() === user.id) {
+      return res.status(409).send("cannot view own post");
+    }
     const isViewed = await View.findOne({ postId: post._id, userId: user._id });
     if (isViewed) {
       return res.status(409).send("already viewed");
@@ -650,6 +662,32 @@ export const setViewed = async (req, res) => {
     return handleError(err, res);
   }
 };
+// export const setViewed = async (req, res) => {
+//   try {
+//     const { user, post } = req;
+//     if (post.creatorId.toString() === user.id) {
+//       return res.status(409).send("cannot view own post");
+//     }
+//     // Atomic upsert to avoid race conditions creating duplicates
+//     const result = await View.updateOne(
+//       { postId: post._id, userId: user._id },
+//       { $setOnInsert: { createdAt: Date.now() } },
+//       { upsert: true }
+//     );
+
+//     // If upserted, this was the first view; otherwise it already existed
+//     if (result.upsertedCount === 1 || result.upsertedId) {
+//       return res.send("success");
+//     }
+//     return res.status(409).send("already viewed");
+//   } catch (err) {
+//     // Handle unique index race gracefully
+//     if (err?.code === 11000) {
+//       return res.status(409).send("already viewed");
+//     }
+//     return handleError(err, res);
+//   }
+// };
 
 export const toggleComments = async (req, res) => {
   try {
@@ -657,8 +695,8 @@ export const toggleComments = async (req, res) => {
     post.isCommentsDisabled = !post.isCommentsDisabled;
     await post.save();
     const message = post.isCommentsDisabled
-      ? "Disabled Comments."
-      : "Enabled Comments.";
+      ? "Comments are disabled."
+      : "Comments are enabled.";
     return res.status(200).json({ message });
   } catch (err) {
     return handleError(err, res);
@@ -758,10 +796,12 @@ export const likeToggle = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   try {
-    const { user, post } = req;
+    const { admin, user, post } = req;
 
-    if (post.creatorId?.toString() !== user.id) {
-      return res.status(401).send("Unauthorized");
+    if (!admin) {
+      if (post.creatorId?.toString() !== user?.id) {
+        return res.status(401).send("Unauthorized");
+      }
     }
 
     // delete the attached files from the storage
@@ -780,13 +820,13 @@ export const deletePost = async (req, res) => {
     if who shared the post is the same as the post creator 
     then no notification will be removed.
     */
-      if (user.id !== post.sharedPost.creatorId.toString()) {
+      if (user?.id !== post.sharedPost.creatorId.toString()) {
         const sharedPostCreator = await User.findById(
-          post.sharedPost.creatorId
+          post.sharedPost.creatorId,
         );
         // romving the like's notification
         const notification = await Notification.findById(
-          post.sharedPost.notificationId
+          post.sharedPost.notificationId,
         );
         if (notification) {
           const socketIdsList = getOnlineUsers().get(sharedPostCreator.id);
@@ -812,7 +852,7 @@ export const deletePost = async (req, res) => {
     await Reply.deleteMany({ postId: post.id });
     await ReplyLike.deleteMany({ postId: post.id });
     await Comment.deleteMany({ postId: post.id });
-    await CommentLike.find({ postId: post.id });
+    await CommentLike.deleteMany({ postId: post.id });
 
     await post.deleteOne();
     return res.status(200).json({ message: "post deleted successfully" });

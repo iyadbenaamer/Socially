@@ -9,9 +9,20 @@ export const create = async (req, res) => {
   try {
     const { filesInfo, user, conversation } = req;
     const { replyTo } = req.query;
-    const { text } = req.body;
+    let { text } = req.body;
+    text = text ? text.trim() : "";
     const now = Date.now();
     const onlineUsersMap = getOnlineUsers();
+
+    if (text === "" && filesInfo.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Message must contain text or media." });
+    }
+
+    if (text.length > 100000) {
+      return res.status(400).json({ message: "Message text is too long." });
+    }
 
     // Determine which participants are currently online (include sender)
     const deliveredToSet = [];
@@ -52,9 +63,12 @@ export const create = async (req, res) => {
       }
       // Fetch user doc once
       const userDoc = await User.findById(participant._id);
-      participantUserDocs.set(participant.id, userDoc);
-      if (participant.id !== user.id) {
-        userDoc.unreadMessagesCount += 1;
+
+      if (userDoc) {
+        participantUserDocs.set(participant.id, userDoc);
+        if (participant.id !== user.id) {
+          userDoc.unreadMessagesCount += 1;
+        }
       }
     }
 
@@ -64,6 +78,8 @@ export const create = async (req, res) => {
     // Handle undelivered logic & socket emission
     for (const participant of conversation.participants) {
       const participantDoc = participantUserDocs.get(participant.id);
+      if (!participantDoc) continue;
+
       const socketIdsList = onlineUsersMap.get(participant.id);
       if (socketIdsList && socketIdsList.length > 0) {
         // Emit to each active socket
@@ -154,7 +170,7 @@ export const deleteMessage = async (req, res) => {
     */
     if (message.info.readBy.length === 1) {
       conversation.participants.id(participantId).unreadMessagesCount -= 1;
-      if (participantProfile.unreadMessagesCount > 0) {
+      if (participantProfile?.unreadMessagesCount > 0) {
         participantProfile.unreadMessagesCount -= 1;
       }
     }
@@ -164,7 +180,7 @@ export const deleteMessage = async (req, res) => {
     */
     if (message.info.deliveredTo.length === 1) {
       const undeliveredConversation =
-        participantProfile.undeliveredConversations.id(conversation.id);
+        participantProfile?.undeliveredConversations.id(conversation.id);
       /*
       if the conversation has only one message delete the entire
       conversation, otherwise delete the message from
@@ -173,10 +189,10 @@ export const deleteMessage = async (req, res) => {
       if (undeliveredConversation?.messages?.length === 1) {
         undeliveredConversation.deleteOne();
       } else {
-        undeliveredConversation.messages.id(message.id).deleteOne();
+        undeliveredConversation?.messages.id(message.id).deleteOne();
       }
     }
-    await participantProfile.save();
+    await participantProfile?.save();
     /*
     if the message is deleted for the other user or deletion option
     is for everyone , then delete the entire message instead of just deleting

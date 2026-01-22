@@ -138,10 +138,16 @@ const processSearchResults = async (searchResults) => {
 // Main search endpoint
 export const search = async (req, res) => {
   try {
-    const { query } = req.query;
-
-    if (!query?.trim()) {
+    let { query } = req.query;
+    query = query?.trim();
+    if (!query) {
       return res.status(400).json({ message: "Search query is required" });
+    }
+
+    if (query.length > 1000) {
+      return res
+        .status(400)
+        .json({ message: "Search query exceeds maximum length" });
     }
 
     const searchResults = await client.search({
@@ -159,10 +165,17 @@ export const search = async (req, res) => {
 // Autocomplete endpoint
 export const autocomplete = async (req, res) => {
   try {
-    const { text } = req.query;
+    let { text } = req.query;
+    text = text?.trim();
 
-    if (!text?.trim()) {
+    if (!text) {
       return res.json([]);
+    }
+
+    if (text.length > 1000) {
+      return res
+        .status(400)
+        .json({ message: "Autocomplete text exceeds maximum length" });
     }
 
     const searchResults = await client.search({

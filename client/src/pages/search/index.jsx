@@ -50,7 +50,7 @@ const Search = () => {
       setIsLoading(true);
       try {
         const { data } = await axiosClient(
-          `/search?query=${encodeURIComponent(query)}`
+          `/search?query=${encodeURIComponent(query)}`,
         );
         setSearchResults(data);
         setHasSearched(true);
@@ -86,7 +86,7 @@ const Search = () => {
       case "ArrowDown":
         e.preventDefault();
         setSelectedIndex((prev) =>
-          prev < suggestions.length - 1 ? prev + 1 : prev
+          prev < suggestions.length - 1 ? prev + 1 : prev,
         );
         break;
       case "ArrowUp":
@@ -113,6 +113,7 @@ const Search = () => {
 
   // Fetch suggestions when typing
   const handleSearchChange = async (value) => {
+    if (value.length > 1000) return; // Limit input length
     setInputValue(value);
     setSelectedIndex(-1); // Reset selectedIndex when typing
 
@@ -124,7 +125,7 @@ const Search = () => {
 
     try {
       const { data } = await axiosClient(
-        `/search/suggest?text=${encodeURIComponent(value)}`
+        `/search/suggest?text=${encodeURIComponent(value)}`,
       );
       // Always put user's input at the top of suggestions
       const suggestions = [value, ...data.filter((s) => s !== value)];
@@ -200,7 +201,7 @@ const Search = () => {
                     key={index}
                     onClick={() => handleSuggestionClick(suggestion)}
                     onMouseEnter={() => handleSuggestionHover(index)}
-                    className={`w-full px-4 py-2 text-left transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                    className={`w-full px-4 py-2 text-left transition-colors first:rounded-t-lg last:rounded-b-lg text-ellipsis overflow-clip text-wrap ${
                       index === selectedIndex ? "bg-alt" : ""
                     }`}
                     role="option"

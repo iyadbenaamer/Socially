@@ -207,12 +207,16 @@ export const add = async (req, res) => {
   try {
     const { user, post, comment } = req;
     const { fileInfo } = req;
-    const { text } = req.body;
+    let { text } = req.body;
+    text = text.trim();
     const profile = await Profile.findById(user.id);
 
     // if the comment disabled then only the post author can reply to a comment
     if (post.isCommentsDisabled && user.id !== post.creatorId.toString()) {
       return res.status(409).json({ message: "Comments are disabled." });
+    }
+    if (text.length > 10000) {
+      return res.status(400).json({ message: "Reply text is too long." });
     }
     if (!(text || fileInfo)) {
       return res.status(409).json({ message: "Reply cannot be empty." });
@@ -297,10 +301,14 @@ export const add = async (req, res) => {
 export const edit = async (req, res) => {
   try {
     const { user, reply } = req;
-    const { text } = req.body;
-
+    let { text } = req.body;
+    text = text.trim();
     if (user.id !== reply.creatorId.toString()) {
       return res.status(401).json("Unauthorized");
+    }
+
+    if (text.length > 10000) {
+      return res.status(400).json({ message: "Reply text is too long." });
     }
 
     if (!text) {
@@ -412,13 +420,15 @@ export const likeToggle = async (req, res) => {
 
 export const deleteReply = async (req, res) => {
   try {
-    const { user, comment, reply } = req;
+    const { admin, user, comment, reply } = req;
     /*
     the reply can be deleted ether by the reply
     creator or the post creator
     */
-    if (!(user.id === reply.creatorId.toString())) {
-      return res.status(401).json("Unauthorized");
+    if (!admin) {
+      if (!(user?.id === reply.creatorId.toString())) {
+        return res.status(401).json("Unauthorized");
+      }
     }
 
     const commentCreator = await User.findById(comment.creatorId);

@@ -15,7 +15,7 @@ const Form = (props) => {
 
   const dispatch = useDispatch();
 
-  const MAX_TEXT = 500;
+  const MAX_TEXT = 40000;
   const MAX_LOCATION = 80;
 
   const trimmedText = (data.text || "").trim();
@@ -24,11 +24,11 @@ const Form = (props) => {
 
   const textCharsLeft = useMemo(
     () => Math.max(0, MAX_TEXT - (data.text?.length || 0)),
-    [data.text]
+    [data.text],
   );
   const locationCharsLeft = useMemo(
     () => Math.max(0, MAX_LOCATION - (data.location?.length || 0)),
-    [data.location]
+    [data.location],
   );
 
   const submit = async () => {
@@ -57,15 +57,15 @@ const Form = (props) => {
           setShowMessage({
             message: "Post is published.",
             type: "info",
-          })
+          }),
         );
       })
-      .catch(() => {
+      .catch((err) => {
         dispatch(
           setShowMessage({
-            message: "An error occurred. Please try again later.",
+            message: err.response.data.message || "Failed to create post.",
             type: "error",
-          })
+          }),
         );
       })
       .finally(() => {
@@ -76,7 +76,7 @@ const Form = (props) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 w-[320px] sm:w-[560px] px-5 bg-[var(--bg-secondary)] rounded-2xl">
+    <div className="flex flex-col gap-2 w-[320px] sm:w-[560px] px-2 bg-[var(--bg-secondary)] rounded-2xl">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Create a Post</h2>
       </div>
