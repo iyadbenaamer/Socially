@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 
+import Admin from "../models/admin.js";
 import User from "../models/user.js";
 
 import { handleError } from "../utils/errorHandler.js";
@@ -13,11 +14,20 @@ export const verifyToken = async (req, res, next) => {
     token = token.trimStart().slice(7);
   }
   try {
-    const userInfo = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(userInfo.id);
+    const tokenInfo = jwt.verify(token, process.env.JWT_SECRET);
+    // check if the token is an admin token
+    if (tokenInfo.role === "admin") {
+      const admin = await Admin.findById(tokenInfo.adminId);
+      if (!admin) {
+        return res.status(403).json("invalid token or admin doesn't exist");
+      }
+      req.admin = admin;
+      return next();
+    }
+    const user = await User.findById(tokenInfo.id);
     if (user) {
       req.user = user;
-      next();
+      return next();
     } else {
       return res.status(403).json("invalid token or user doesn't exist");
     }
@@ -35,8 +45,17 @@ export const getUserInfo = async (req, res, next) => {
     token = token.trimStart().slice(7);
   }
   try {
-    const userInfo = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(userInfo.id);
+    const tokenInfo = jwt.verify(token, process.env.JWT_SECRET);
+    // check if the token is an admin token
+    if (tokenInfo.role === "admin") {
+      const admin = await Admin.findById(tokenInfo.adminId);
+      if (!admin) {
+        return res.status(403).json("invalid token or admin doesn't exist");
+      }
+      req.admin = admin;
+      return next();
+    }
+    const user = await User.findById(tokenInfo.id);
     if (user) {
       req.user = user;
       next();
