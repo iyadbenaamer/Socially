@@ -44,8 +44,6 @@ const ProfileSchema = new Schema({
   joinedAt: { type: Number, default: Date.now() },
 });
 
-ProfileSchema.index({ username: 1 });
-
 // indexing the profile in elasticsearch
 ProfileSchema.post("save", async function (doc) {
   try {

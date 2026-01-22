@@ -68,7 +68,7 @@ const Slider = (props) => {
         setCurrentSlide((s) => Math.max(0, s - 1));
       }
     },
-    [files]
+    [files],
   );
 
   useEffect(() => {
