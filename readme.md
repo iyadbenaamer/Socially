@@ -99,14 +99,50 @@ Follow these steps to set up the project:
 
 4. **Seed the database (optional):**
 
-   To populate the database with sample data, run the seed script:
+To populate the database with sample data, run the seed script. You can run it directly with `node` or via `npm` using the added `seed` script.
 
-   ```bash
-   $ cd server
-   $ node utils/seed.js
-   ```
+Basic usage:
 
-   This will create sample users, posts, and relationships. The script uses the Pexels API to generate contextual images for posts.
+```bash
+$ cd server
+$ node utils/seed.js
+# or using npm
+$ npm run seed
+```
+
+CLI options
+
+- `-u, --users <number>` — number of users to create (default: 10)
+- `-p, --max-posts <number>` — max posts per user (default: 20)
+- `-f, --max-followers <number>` — max followers per user (default: 100)
+- `--password <password>` — password for created users (default: "password")
+- `-h, --help` — show usage
+
+Example:
+
+```bash
+# create 50 users, max 10 posts per user, up to 200 followers
+$ node utils/seed.js --users 50 --max-posts 10 --max-followers 200
+```
+
+The script will create sample users, posts, and relationships. It uses the Pexels API to generate contextual images for posts (set `PEXELS_API_KEY` in `/server/.env`).
+
+5. **Reindex Elasticsearch profiles (optional):**
+
+
+    If you need to rebuild the Elasticsearch `profiles` index (for example after schema changes), run the reindex script from the `server` folder.
+
+    ```bash
+    $ cd server
+    $ node utils/reindexProfiles.js
+    # or using npm
+    $ npm run reindex
+    ```
+
+    Notes:
+    - The script reads Elasticsearch configuration from environment variables (`ELASTIC_PROTOCOL`, `ELASTIC_HOST`, `ELASTIC_PORT`, `ELASTIC_USERNAME`, `ELASTIC_PASSWORD`, `ELASTICSEARCH_CA_PATH`).
+    - You can supply a local `MONGO_URI` via `/server/.env` or rely on the default `mongodb://127.0.0.1:27017/socially` for local testing.
+    - Use `ELASTIC_PROTOCOL=https` and set `ELASTICSEARCH_CA_PATH` when connecting to a secured Elasticsearch cluster.
 
 ### Usage
 

@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import { Client } from "@elastic/elasticsearch";
 import fs from "fs";
-import { config } from "dotenv";
 
 import Profile from "../models/profile.js";
+import { pathToFileURL } from "url";
 
-config();
 // ================== CONFIG ==================
-const ELASTIC_PROTOCOL = process.env.ELASTIC_PROTOCOL || "https";
+// Default to http for local dev unless overridden
+const ELASTIC_PROTOCOL = process.env.ELASTIC_PROTOCOL || "http";
 const ELASTIC_HOST = process.env.ELASTIC_HOST || "127.0.0.1";
 const ELASTIC_PORT = process.env.ELASTIC_PORT || "9200";
 const ELASTIC_USERNAME = process.env.ELASTIC_USERNAME || "elastic";
@@ -15,6 +15,9 @@ const ELASTIC_PASSWORD = process.env.ELASTIC_PASSWORD;
 
 // CA path only needed for HTTPS
 const CA_PATH = process.env.ELASTICSEARCH_CA_PATH || "";
+
+// MongoDB URI
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/socially";
 
 // ================== VALIDATION ==================
 if (!ELASTIC_PASSWORD) {
@@ -105,7 +108,7 @@ const indexProfiles = async () => {
 // ================== INITIALIZER ==================
 export const initializeElasticsearch = async (reindex = false) => {
   try {
-    const exists = await client.indices.exists({ index: INDEX_NAME });
+    const { body: exists } = await client.indices.exists({ index: INDEX_NAME });
 
     if (exists && !reindex) {
       console.log("ℹ️ Elasticsearch index already exists");
@@ -116,7 +119,7 @@ export const initializeElasticsearch = async (reindex = false) => {
     await client.indices.delete({ index: INDEX_NAME }).catch(() => {});
     await client.indices.create({
       index: INDEX_NAME,
-      mappings: INDEX_CONFIG.mappings,
+      body: INDEX_CONFIG,
     });
 
     console.log("✅ Index created");
@@ -129,7 +132,9 @@ export const initializeElasticsearch = async (reindex = false) => {
 };
 
 // ================== CLI MODE ==================
-if (import.meta.url === `file://${process.argv[1]}`) {
+const entryFile = process.argv[1] ? pathToFileURL(process.argv[1]).href : null;
+
+if (entryFile && import.meta.url === entryFile) {
   (async () => {
     try {
       await mongoose.connect(MONGO_URI);

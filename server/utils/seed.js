@@ -4,14 +4,58 @@ import { Types } from "mongoose";
 import User from "../models/user.js";
 import Profile from "../models/profile.js";
 import Post from "../models/post.js";
+import Follow from "../models/follow.js";
 
 import { client } from "../services/elasticsearch.js";
 
-// Configuration
-const TOTAL_USERS = 10; // Reduce to 10 for testing, increase for production seed
-const MAX_POSTS_PER_USER = 20; // Reduced from 100 to 20 to minimize API calls
-const MAX_FOLLOWERS = 100;
-const PASSWORD = "password";
+// Configuration (defaults can be overridden via CLI flags)
+let TOTAL_USERS = 10; // Reduce to 10 for testing, increase for production seed
+let MAX_POSTS_PER_USER = 20; // Reduced from 100 to 20 to minimize API calls
+let MAX_FOLLOWERS = 100;
+let PASSWORD = "password";
+
+// Simple CLI argument parser to override defaults
+function printUsage() {
+  console.log(`Usage: node utils/seed.js [options]
+
+Options:
+  -u, --users <number>          Number of users to create (default: ${TOTAL_USERS})
+  -p, --max-posts <number>      Max posts per user (default: ${MAX_POSTS_PER_USER})
+  -f, --max-followers <number>  Max followers per user (default: ${MAX_FOLLOWERS})
+  --password <password>         Password used for created users (default: ${PASSWORD})
+  -h, --help                    Show this help message
+`);
+}
+
+function parseArgs() {
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "-u" || a === "--users") {
+      TOTAL_USERS = Number(argv[++i]) || TOTAL_USERS;
+      continue;
+    }
+    if (a === "-p" || a === "--max-posts") {
+      MAX_POSTS_PER_USER = Number(argv[++i]) || MAX_POSTS_PER_USER;
+      continue;
+    }
+    if (a === "-f" || a === "--max-followers") {
+      MAX_FOLLOWERS = Number(argv[++i]) || MAX_FOLLOWERS;
+      continue;
+    }
+    if (a === "--password") {
+      PASSWORD = argv[++i] || PASSWORD;
+      continue;
+    }
+    if (a === "-h" || a === "--help") {
+      printUsage();
+      process.exit(0);
+    }
+  }
+}
+
+// Apply CLI overrides immediately
+parseArgs();
 
 const FIRST_NAMES = [
   "Emma",
@@ -915,7 +959,7 @@ async function createUserPosts(userId, allUserIds) {
       console.log(
         `    Post ${
           i + 1
-        }/${numPosts}: Fetching ${imageCount} contextual images...`
+        }/${numPosts}: Fetching ${imageCount} contextual images...`,
       );
       for (let j = 0; j < imageCount; j++) {
         images.push({
@@ -943,7 +987,7 @@ async function createUserPosts(userId, allUserIds) {
       console.log(
         `    Post ${
           i + 1
-        }/${numPosts}: Fetching ${imageCount} generic images...`
+        }/${numPosts}: Fetching ${imageCount} generic images...`,
       );
       for (let j = 0; j < imageCount; j++) {
         const imageType =
@@ -962,7 +1006,7 @@ async function createUserPosts(userId, allUserIds) {
       text: postText,
       keywords: Array.from(
         { length: 3 },
-        () => TOPICS[Math.floor(Math.random() * TOPICS.length)]
+        () => TOPICS[Math.floor(Math.random() * TOPICS.length)],
       ),
       likes: Array.from({ length: Math.floor(Math.random() * 1000) }, () => ({
         _id: allUserIds[Math.floor(Math.random() * allUserIds.length)],
@@ -1005,8 +1049,8 @@ async function getPexelsImage(searchTerm, width = 800, height = 600) {
       if (timeUntilReset > 0) {
         console.warn(
           `Rate limit low (${rateLimitRemaining} remaining). Waiting ${Math.ceil(
-            timeUntilReset / 1000
-          )} seconds until reset...`
+            timeUntilReset / 1000,
+          )} seconds until reset...`,
         );
         await delay(timeUntilReset + 1000); // Add 1 second buffer
       }
@@ -1025,19 +1069,19 @@ async function getPexelsImage(searchTerm, width = 800, height = 600) {
 
     const response = await fetch(
       `https://api.pexels.com/v1/search?query=${encodeURIComponent(
-        searchTerm
+        searchTerm,
       )}&per_page=${perPage}&orientation=landscape`,
       {
         headers: {
           Authorization: apiKey,
         },
-      }
+      },
     );
 
     // Update rate limit info from headers
     const rateLimitHeader = response.headers.get("X-Ratelimit-Limit");
     const rateLimitRemainingHeader = response.headers.get(
-      "X-Ratelimit-Remaining"
+      "X-Ratelimit-Remaining",
     );
     const rateLimitResetHeader = response.headers.get("X-Ratelimit-Reset");
 
@@ -1051,7 +1095,7 @@ async function getPexelsImage(searchTerm, width = 800, height = 600) {
     // Log rate limit status occasionally
     if (rateLimitRemaining % 100 === 0) {
       console.log(
-        `Rate limit status: ${rateLimitRemaining} requests remaining`
+        `Rate limit status: ${rateLimitRemaining} requests remaining`,
       );
     }
 
@@ -1061,26 +1105,26 @@ async function getPexelsImage(searchTerm, width = 800, height = 600) {
       const timeUntilReset = Math.max(0, rateLimitReset * 1000 - now);
       console.warn(
         `Rate limited for "${searchTerm}". Waiting ${Math.ceil(
-          timeUntilReset / 1000
-        )} seconds until reset...`
+          timeUntilReset / 1000,
+        )} seconds until reset...`,
       );
       await delay(timeUntilReset + 1000); // Add 1 second buffer
 
       // Retry once after waiting
       const retryResponse = await fetch(
         `https://api.pexels.com/v1/search?query=${encodeURIComponent(
-          searchTerm
+          searchTerm,
         )}&per_page=${perPage}&orientation=landscape`,
         {
           headers: {
             Authorization: apiKey,
           },
-        }
+        },
       );
 
       // Update rate limit info from retry response
       const retryRateLimitRemaining = retryResponse.headers.get(
-        "X-Ratelimit-Remaining"
+        "X-Ratelimit-Remaining",
       );
       const retryRateLimitReset =
         retryResponse.headers.get("X-Ratelimit-Reset");
@@ -1094,7 +1138,7 @@ async function getPexelsImage(searchTerm, width = 800, height = 600) {
 
       if (!retryResponse.ok) {
         throw new Error(
-          `Pexels API error after retry: ${retryResponse.status} ${retryResponse.statusText}`
+          `Pexels API error after retry: ${retryResponse.status} ${retryResponse.statusText}`,
         );
       }
 
@@ -1110,7 +1154,7 @@ async function getPexelsImage(searchTerm, width = 800, height = 600) {
 
     if (!response.ok) {
       throw new Error(
-        `Pexels API error: ${response.status} ${response.statusText}`
+        `Pexels API error: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -1130,7 +1174,7 @@ async function getPexelsImage(searchTerm, width = 800, height = 600) {
     console.warn(`Pexels API error for "${searchTerm}":`, error.message);
     // Fallback to Picsum Photos if Pexels fails
     return `https://picsum.photos/${width}/${height}?random=${Math.floor(
-      Math.random() * 1000
+      Math.random() * 1000,
     )}`;
   }
 }
@@ -1213,7 +1257,7 @@ async function seedDatabase() {
     } catch (error) {
       if (error.message.includes("resource_already_exists_exception")) {
         console.log(
-          "Elasticsearch index 'profiles' already exists, skipping creation"
+          "Elasticsearch index 'profiles' already exists, skipping creation",
         );
       } else {
         throw error;
@@ -1243,28 +1287,38 @@ async function seedDatabase() {
 
       // Get random followers (excluding self)
       const potentialFollowers = allUserIds.filter(
-        (id) => id !== currentUser.user._id.toString()
+        (id) => id !== currentUser.user._id.toString(),
       );
       const selectedFollowers = potentialFollowers
         .sort(() => 0.5 - Math.random())
         .slice(0, followersCount);
 
-      // Update follower's following and current user's followers
+      // Update follower relationships using Follow model and profile counts
       for (const followerId of selectedFollowers) {
-        // Add to current user's followers
-        currentUser.profile.followers.push({
-          _id: followerId,
-          notificationId: new Types.ObjectId().toString(),
+        // Skip if follow already exists
+        const exists = await Follow.findOne({
+          followedId: currentUser.user._id,
+          followerId,
+        });
+        if (exists) continue;
+
+        await Follow.create({
+          followedId: currentUser.user._id,
+          followerId,
+          notificationId: new Types.ObjectId(),
         });
 
-        // Add to follower's following
-        const followerProfile = await Profile.findOne({ _id: followerId });
-        followerProfile.following.push({
-          _id: currentUser.user._id.toString(),
-        });
+        // Increment counts on both profiles (ensure fields exist)
+        currentUser.profile.followersCount =
+          (currentUser.profile.followersCount || 0) + 1;
+
+        const followerProfile = await Profile.findById(followerId);
+        followerProfile.followingCount =
+          (followerProfile.followingCount || 0) + 1;
         await followerProfile.save();
       }
 
+      // Save current user's profile to persist updated followersCount
       await currentUser.profile.save();
     }
 
