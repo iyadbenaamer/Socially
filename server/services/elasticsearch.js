@@ -1,48 +1,88 @@
 import { Client } from "@elastic/elasticsearch";
-import { config } from "dotenv";
 import fs from "fs";
+import { config } from "dotenv";
 
 config();
+// ================== CONFIG ==================
+const ELASTIC_PROTOCOL = process.env.ELASTIC_PROTOCOL || "https";
+const ELASTIC_HOST = process.env.ELASTIC_HOST || "127.0.0.1";
+const ELASTIC_PORT = process.env.ELASTIC_PORT || "9200";
+const ELASTIC_USERNAME = process.env.ELASTIC_USERNAME || "elastic";
+const ELASTIC_PASSWORD = process.env.ELASTIC_PASSWORD;
 
-const ELASTICSEARCH_URL = process.env.ELASTICSEARCH_URL;
-const ELASTICSEARCH_USER = process.env.ELASTICSEARCH_USER;
-const ELASTICSEARCH_PASSWORD = process.env.ELASTICSEARCH_PASSWORD;
-const ELASTICSEARCH_HTTPS = process.env.ELASTICSEARCH_HTTPS === "true";
-const ELASTICSEARCH_CA_PATH = process.env.ELASTICSEARCH_CA_PATH || null;
-const ELASTICSEARCH_REJECT_UNAUTHORIZED =
-  process.env.ELASTICSEARCH_REJECT_UNAUTHORIZED !== "false";
+// CA path only needed for HTTPS
+const CA_PATH = process.env.ELASTICSEARCH_CA_PATH || "";
 
-let clientData = {
-  node: ELASTICSEARCH_URL,
-  auth: {
-    username: ELASTICSEARCH_USER,
-    password: ELASTICSEARCH_PASSWORD,
-  },
-};
-
-if (ELASTICSEARCH_HTTPS) {
-  // ensure URL uses https protocol when requested
-  if (clientData.node && !/^https?:\/\//i.test(clientData.node)) {
-    clientData.node = `https://${clientData.node}`;
-  }
-
-  // attach ssl options for TLS support
-  clientData.ssl = {
-    rejectUnauthorized: !!ELASTICSEARCH_REJECT_UNAUTHORIZED,
-  };
-
-  // load CA if path provided (useful for self-signed certs)
-  if (ELASTICSEARCH_CA_PATH) {
-    try {
-      clientData.ssl.ca = fs.readFileSync(ELASTICSEARCH_CA_PATH);
-    } catch (err) {
-      // don't throw here; log a warning so service can still start
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Failed to read ELASTICSEARCH_CA_PATH (${ELASTICSEARCH_CA_PATH}): ${err.message}`,
-      );
-    }
-  }
+// ================== VALIDATION ==================
+if (!ELASTIC_PASSWORD) {
+  throw new Error("❌ ELASTIC_PASSWORD environment variable is not set");
 }
 
-export const client = new Client(clientData);
+if (ELASTIC_PROTOCOL === "https" && !fs.existsSync(CA_PATH)) {
+  throw new Error(`❌ Elasticsearch CA certificate not found at ${CA_PATH}`);
+}
+
+// ================== NODE URL ==================
+const ELASTIC_NODE = `${ELASTIC_PROTOCOL}://${ELASTIC_HOST}:${ELASTIC_PORT}`;
+
+// ================== CLIENT OPTIONS ==================
+const clientOptions = {
+  node: ELASTIC_NODE,
+
+  auth: {
+    username: ELASTIC_USERNAME,
+    password: ELASTIC_PASSWORD,
+  },
+
+  sniffOnStart: false,
+  sniffInterval: false,
+  maxRetries: 5,
+  requestTimeout: 30000,
+};
+
+// Enable TLS only when using HTTPS
+if (ELASTIC_PROTOCOL === "https") {
+  clientOptions.tls = {
+    ca: fs.readFileSync(CA_PATH),
+    rejectUnauthorized: true,
+  };
+}
+
+// ================== CLIENT ==================
+export const client = new Client(clientOptions);
+
+// ================== CONNECTION TEST ==================
+(async () => {
+  try {
+    await client.ping();
+    console.log(
+      `✅ Elasticsearch connected (${ELASTIC_PROTOCOL.toUpperCase()})`,
+    );
+  } catch (err) {
+    console.error("❌ Elasticsearch connection failed");
+    console.error(err.meta?.body || err.message);
+  }
+})();
+
+// ================== ENSURE INDEX EXISTS ==================
+export async function ensureProfilesIndex() {
+  const indexName = "profiles";
+
+  const exists = await client.indices.exists({ index: indexName });
+
+  if (!exists) {
+    await client.indices.create({
+      index: indexName,
+      mappings: {
+        properties: {
+          firstName: { type: "text" },
+          lastName: { type: "text" },
+          username: { type: "keyword" },
+          suggest: { type: "completion" },
+        },
+      },
+    });
+
+    console.log(`✅ Created Elasticsearch index: ${indexName}`);
+  }
+}

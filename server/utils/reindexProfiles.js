@@ -1,19 +1,61 @@
 import mongoose from "mongoose";
 import { Client } from "@elastic/elasticsearch";
+import fs from "fs";
+import { config } from "dotenv";
 
 import Profile from "../models/profile.js";
 
-const ELASTICSEARCH_URL = process.env.ELASTICSEARCH_URL;
-const ELASTICSEARCH_USER = process.env.ELASTICSEARCH_USER;
-const ELASTICSEARCH_PASSWORD = process.env.ELASTICSEARCH_PASSWORD;
+config();
+// ================== CONFIG ==================
+const ELASTIC_PROTOCOL = process.env.ELASTIC_PROTOCOL || "https";
+const ELASTIC_HOST = process.env.ELASTIC_HOST || "127.0.0.1";
+const ELASTIC_PORT = process.env.ELASTIC_PORT || "9200";
+const ELASTIC_USERNAME = process.env.ELASTIC_USERNAME || "elastic";
+const ELASTIC_PASSWORD = process.env.ELASTIC_PASSWORD;
 
-const MONGO_URI = process.env.MONGO_URI;
+// CA path only needed for HTTPS
+const CA_PATH = process.env.ELASTICSEARCH_CA_PATH || "";
 
-// Elasticsearch index configuration
+// ================== VALIDATION ==================
+if (!ELASTIC_PASSWORD) {
+  throw new Error("❌ ELASTIC_PASSWORD is not set");
+}
+
+if (ELASTIC_PROTOCOL === "https" && !fs.existsSync(CA_PATH)) {
+  throw new Error(`❌ Elasticsearch CA not found at ${CA_PATH}`);
+}
+
+// ================== CLIENT ==================
+const clientOptions = {
+  node: `${ELASTIC_PROTOCOL}://${ELASTIC_HOST}:${ELASTIC_PORT}`,
+
+  auth: {
+    username: ELASTIC_USERNAME,
+    password: ELASTIC_PASSWORD,
+  },
+
+  sniffOnStart: false,
+  sniffInterval: false,
+  maxRetries: 5,
+  requestTimeout: 30000,
+};
+
+if (ELASTIC_PROTOCOL === "https") {
+  clientOptions.tls = {
+    ca: fs.readFileSync(CA_PATH),
+    rejectUnauthorized: true,
+  };
+}
+
+const client = new Client(clientOptions);
+
+// ================== INDEX CONFIG ==================
+const INDEX_NAME = "profiles";
+
 const INDEX_CONFIG = {
   mappings: {
     properties: {
-      username: { type: "text" },
+      username: { type: "keyword" },
       firstName: { type: "text" },
       lastName: { type: "text" },
       suggest: {
@@ -27,30 +69,15 @@ const INDEX_CONFIG = {
   },
 };
 
-let clientData;
-
-clientData = {
-  node: ELASTICSEARCH_URL,
-  auth: {
-    username: ELASTICSEARCH_USER,
-    password: ELASTICSEARCH_PASSWORD,
-  },
-  headers: {
-    accept: "application/json",
-    "content-type": "application/json",
-  },
-};
-
-const client = new Client(clientData);
-
+// ================== INDEXING ==================
 const indexProfiles = async () => {
   const profiles = await Profile.find({});
-  console.log(`Found ${profiles.length} profiles.`);
+  console.log(`🔎 Found ${profiles.length} profiles`);
 
   for (const doc of profiles) {
     try {
       await client.index({
-        index: "profiles",
+        index: INDEX_NAME,
         id: doc._id.toString(),
         document: {
           username: doc.username,
@@ -61,54 +88,59 @@ const indexProfiles = async () => {
           },
         },
       });
-      console.log(`Indexed profile: ${doc.username}`);
+
+      console.log(`✅ Indexed: ${doc.username}`);
     } catch (err) {
       console.error(
-        `Failed to index profile ${doc._id}:`,
-        err.meta?.body?.error || err
+        `❌ Failed to index ${doc._id}`,
+        err.meta?.body?.error || err.message,
       );
     }
   }
 
-  await client.indices.refresh({ index: "profiles" });
-  console.log("Refreshed index.");
+  await client.indices.refresh({ index: INDEX_NAME });
+  console.log("🔄 Index refreshed");
 };
 
-// Initialize Elasticsearch
+// ================== INITIALIZER ==================
 export const initializeElasticsearch = async (reindex = false) => {
   try {
-    const indexExists = await client.indices.exists({ index: "profiles" });
+    const exists = await client.indices.exists({ index: INDEX_NAME });
 
-    if (indexExists && !reindex) {
-      console.log("Elasticsearch index already exists.");
+    if (exists && !reindex) {
+      console.log("ℹ️ Elasticsearch index already exists");
       return;
     }
 
-    console.log("Creating Elasticsearch index...");
-    await client.indices.delete({ index: "profiles" }).catch(() => {});
+    console.log("🧹 Recreating Elasticsearch index...");
+    await client.indices.delete({ index: INDEX_NAME }).catch(() => {});
     await client.indices.create({
-      index: "profiles",
-      body: INDEX_CONFIG,
+      index: INDEX_NAME,
+      mappings: INDEX_CONFIG.mappings,
     });
-    console.log("Created 'profiles' index with mapping.");
 
+    console.log("✅ Index created");
     await indexProfiles();
-    console.log("Elasticsearch initialization complete.");
+    console.log("🎉 Elasticsearch initialization complete");
   } catch (error) {
-    console.error("Failed to initialize Elasticsearch:", error);
+    console.error("❌ Elasticsearch init failed:", error.meta?.body || error);
+    throw error;
   }
 };
 
-// Only run the full reindex if this file is run directly
+// ================== CLI MODE ==================
 if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
     try {
       await mongoose.connect(MONGO_URI);
+      console.log("✅ MongoDB connected");
+
       await initializeElasticsearch(true);
-      console.log("Done reindexing.");
+
+      console.log("🏁 Reindexing finished");
       process.exit(0);
     } catch (error) {
-      console.error("Reindexing failed:", error);
+      console.error("❌ Reindexing failed:", error);
       process.exit(1);
     }
   })();
