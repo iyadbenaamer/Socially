@@ -23,7 +23,7 @@ const FollowToggleBtn = ({
       .patch(
         `/profile/${
           isFollowing ? "unfollow" : "follow"
-        }?userId=${accountToFollowId}`
+        }?userId=${accountToFollowId}`,
       )
       .then(() => {
         if (_id === myProfileId && setCount) {
@@ -37,7 +37,7 @@ const FollowToggleBtn = ({
             setShowMessage({
               message: err.response.data?.message,
               type: "error",
-            })
+            }),
           );
           navigate(-1);
         }

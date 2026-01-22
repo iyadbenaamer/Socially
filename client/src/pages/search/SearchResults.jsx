@@ -34,7 +34,10 @@ const SearchResults = ({ results, hasSearched }) => {
                   @{profile.username}
                 </p>
               </Link>
-              <FollowToggleBtn id={profile._id} />
+              <FollowToggleBtn
+                id={profile._id}
+                isFollowing={profile.isFollowing}
+              />
             </div>
             {profile.bio && (
               <p className="text-sm line-clamp-3">{profile.bio}</p>

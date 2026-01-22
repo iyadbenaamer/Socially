@@ -1,6 +1,7 @@
 import Profile from "../models/profile.js";
 import { client } from "../services/elasticsearch.js";
 import { handleError } from "../utils/errorHandler.js";
+import { Types } from "mongoose";
 
 const INDEX_NAME = "profiles";
 
@@ -106,33 +107,93 @@ const buildPrefixQuery = (searchTerm) => {
   };
 };
 
-// Process search results and fetch full profile data
-const processSearchResults = async (searchResults) => {
+// Process search results and fetch full profile data using aggregation
+const processSearchResults = async (searchResults, userId) => {
   const ids = searchResults.hits.hits.map((hit) => hit._id);
-  const profiles = await Profile.find({ _id: { $in: ids } }).lean();
+  if (!ids || ids.length === 0) return [];
 
-  // Create a map for quick lookup
-  const profilesMap = new Map(
-    profiles.map((profile) => [profile._id.toString(), profile])
-  );
+  const objectIds = ids.map((id) => new Types.ObjectId(id));
 
-  // Return profiles in the same order as search results
-  return ids
-    .map((id) => {
-      const profile = profilesMap.get(id);
-      if (!profile) return null;
+  // Build aggregation pipeline to preserve ES order and compute counts
+  const pipeline = [
+    { $match: { _id: { $in: objectIds } } },
+    {
+      $addFields: {
+        __order: { $indexOfArray: [ids, { $toString: "$_id" }] },
+      },
+    },
+    // Project core fields and ensure numeric follower/following counts
+    {
+      $project: {
+        firstName: 1,
+        lastName: 1,
+        username: 1,
+        profilePicPath: 1,
+        bio: 1,
+        followersCount: { $ifNull: ["$followersCount", 0] },
+        followingCount: { $ifNull: ["$followingCount", 0] },
+        joinedAt: 1,
+        __order: 1,
+      },
+    },
+  ];
 
-      return {
-        ...profile,
-        followers: Array.isArray(profile.followers)
-          ? profile.followers.length
-          : 0,
-        following: Array.isArray(profile.following)
-          ? profile.following.length
-          : 0,
-      };
-    })
-    .filter(Boolean);
+  // If we have an authenticated user, lookup follow documents to compute isFollowing
+  if (userId) {
+    pipeline.push(
+      {
+        $lookup: {
+          from: "follows",
+          let: { targetUserId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$followedId", "$$targetUserId"] },
+                    { $eq: ["$followerId", new Types.ObjectId(userId)] },
+                  ],
+                },
+              },
+            },
+            { $limit: 1 },
+          ],
+          as: "followArr",
+        },
+      },
+      {
+        $addFields: {
+          isFollowing: { $gt: [{ $size: "$followArr" }, 0] },
+        },
+      },
+      { $project: { followArr: 0 } },
+    );
+  } else {
+    // Unauthenticated users are not following anyone
+    pipeline.push({ $addFields: { isFollowing: false } });
+  }
+
+  // Sort by the original Elasticsearch order
+  pipeline.push({ $sort: { __order: 1 } });
+
+  // Final projection to match previous shape (`followers` and `following` fields)
+  pipeline.push({
+    $project: {
+      _id: 1,
+      followers: "$followersCount",
+      following: "$followingCount",
+      firstName: 1,
+      lastName: 1,
+      username: 1,
+      profilePicPath: 1,
+      bio: 1,
+      joinedAt: 1,
+      isFollowing: 1,
+    },
+  });
+
+  const profiles = await Profile.aggregate(pipeline);
+  return profiles;
 };
 
 // Main search endpoint
@@ -155,7 +216,8 @@ export const search = async (req, res) => {
       query: buildSearchQuery(query),
     });
 
-    const profiles = await processSearchResults(searchResults);
+    const userId = req.user?._id || req.user?.id;
+    const profiles = await processSearchResults(searchResults, userId);
     return res.json(profiles);
   } catch (err) {
     return handleError(err, res);
