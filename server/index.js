@@ -63,7 +63,6 @@ app.use(bodyParser.json({ limit: "200mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "200mb", extended: true }));
 app.use(cors());
 app.use("/storage", express.static(path.join(__dirname, "public/storage")));
-app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 app.use(cookieParser(process.env.JWT_SECRET));
 
 /*FILE STORAGE*/
@@ -91,7 +90,7 @@ app.patch(
     { name: "coverPic", maxCount: 1 },
   ]),
   compressImages,
-  setProfile
+  setProfile,
 );
 app.post(
   "/api/post/create",
@@ -99,7 +98,7 @@ app.post(
   verifyToken,
   upload.fields([{ name: "media" }]),
   compressImages,
-  createPost
+  createPost,
 );
 app.post(
   "/api/post/share/",
@@ -107,7 +106,7 @@ app.post(
   verifyToken,
   upload.fields([{ name: "media" }]),
   compressImages,
-  sharePost
+  sharePost,
 );
 app.post(
   "/api/message/send",
@@ -117,7 +116,7 @@ app.post(
   compressImages,
   getConversationInfo,
   isInChat,
-  create
+  create,
 );
 app.post(
   "/api/message/send_first_time",
@@ -126,7 +125,7 @@ app.post(
   upload.fields([{ name: "media" }]),
   compressImages,
   newConversationByMessaging,
-  create
+  create,
 );
 app.post(
   "/api/message/reply",
@@ -136,7 +135,7 @@ app.post(
   compressImages,
   getConversationInfo,
   isInChat,
-  create
+  create,
 );
 app.post(
   "/api/comment/add",
@@ -145,7 +144,7 @@ app.post(
   upload.single("media"),
   uploadSingleFile,
   getPostsInfo,
-  addComment
+  addComment,
 );
 app.post(
   "/api/reply/add",
@@ -154,7 +153,7 @@ app.post(
   upload.single("media"),
   uploadSingleFile,
   getPostsInfo,
-  addReply
+  addReply,
 );
 /*ROUTES*/
 app.use("/api/", userRoute);

@@ -30,7 +30,7 @@ const ProfileSchema = new Schema({
   followersCount: { type: Number, default: 0, min: 0 },
   profilePicPath: {
     type: String,
-    default: `/assets/blank_user.jpg`,
+    default: `/storage/assets/blank_user.jpg`,
   },
   coverPicPath: { type: String, default: "" },
   birthDate: String,

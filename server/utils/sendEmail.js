@@ -44,7 +44,7 @@ const createEmailTemplate = (title, code, token, isPasswordReset = false) => {
         <div class="header">
           <img src=${
             process.env.APP_URL
-          }/assets/logo.png alt="Socially" width="80" height="50" style="display:block;margin:0 auto 28px auto;">
+          }/storage/assets/logo.png alt="Socially" width="80" height="50" style="display:block;margin:0 auto 28px auto;">
           <h1>${title}</h1>
           <p>Welcome to Socially - Your Social Connection Platform</p>
         </div>
@@ -99,7 +99,7 @@ export const sendAccountVerificationCode = async (email, code, token) => {
       "Verify Your Account",
       code,
       token,
-      false
+      false,
     );
 
     await transporter.sendMail({
@@ -127,7 +127,7 @@ export const sendResetPasswordCode = async (email, code, token) => {
       "Reset Your Password",
       code,
       token,
-      true
+      true,
     );
 
     await transporter.sendMail({
