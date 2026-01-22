@@ -35,6 +35,10 @@ clientData = {
     username: ELASTICSEARCH_USER,
     password: ELASTICSEARCH_PASSWORD,
   },
+  headers: {
+    accept: "application/json",
+    "content-type": "application/json",
+  },
 };
 
 const client = new Client(clientData);

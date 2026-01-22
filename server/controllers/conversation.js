@@ -219,6 +219,7 @@ export const deleteConversation = async (req, res) => {
       });
     });
 
+    await Message.deleteMany({ conversationId: conversation._id });
     await conversation.deleteOne();
 
     await User.updateMany(

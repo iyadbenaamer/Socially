@@ -3,8 +3,8 @@ import { model, Schema, Types } from "mongoose";
 const { ObjectId } = Types;
 
 const ReplyLikeSchema = new Schema({
-  postId: ObjectId,
   userId: ObjectId,
+  postId: ObjectId,
   replyId: ObjectId,
   notificationId: ObjectId,
   createdAt: Number,

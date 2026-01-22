@@ -40,7 +40,8 @@ async function safeDelete(filePath) {
 async function compressOne(file, index = 0) {
   if (!file.mimetype?.startsWith("image")) return file; // skip
   const originalPath = path.resolve(file.path);
-  const newName = `${Date.now()}-${index}.jpeg`;
+  const parsed = path.parse(file.filename);
+  const newName = `${parsed.name || "image"}-${index}.jpeg`;
   const outputPath = path.join(physicalDir, newName);
   try {
     // Read original first so sharp does NOT hold an OS handle over the file while we delete.
@@ -48,6 +49,7 @@ async function compressOne(file, index = 0) {
     await sharp(buffer).rotate().jpeg({ quality: 50 }).toFile(outputPath);
     // Only now mutate filename
     file.filename = newName;
+    file.path = outputPath;
     // Delete original AFTER writing new file
     await safeDelete(originalPath);
   } catch (err) {
@@ -76,6 +78,11 @@ export const compressImages = async (req, res, next) => {
 
     // Build filesInfo from media (keep legacy 'video' typo)
     const media = req.files.media;
+
+    if (media.length > 100) {
+      return res.status(400).json({ message: "Too many files uploaded." });
+    }
+
     const filesInfo = [];
     if (Array.isArray(media)) {
       media.forEach((file) => {

@@ -8,7 +8,8 @@ const ViewSchema = new Schema({
   createdAt: Number,
 });
 
-ViewSchema.index({ postId: 1 });
+// Ensure a single view per user per post, even under concurrency
+ViewSchema.index({ postId: 1, userId: 1 }, { unique: true });
 
 const View = model("View", ViewSchema);
 export default View;

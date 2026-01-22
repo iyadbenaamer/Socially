@@ -32,6 +32,19 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
     });
+
+    // create a profile document for the new user with the user's ID
+    const profilesCount = await Profile.countDocuments();
+    const newProfile = new Profile({
+      _id: newUser.id,
+      firstName,
+      lastName,
+      username: `user${profilesCount + 1}`,
+      birthDate,
+      gender,
+    });
+    await newProfile.save();
+
     const verificationCode = generateCode(6);
     const verificationToken = jwt.sign(
       { id: newUser._id, verificationCode },
@@ -46,19 +59,9 @@ export const signup = async (req, res) => {
       verificationCode,
       verificationToken
     );
+
     newUser.verificationStatus.verificationToken = verificationToken;
     await newUser.save();
-    // create a profile document for the new user with the user's ID
-    const profilesCount = await Profile.countDocuments();
-    const newProfile = new Profile({
-      _id: newUser.id,
-      firstName,
-      lastName,
-      username: `user${profilesCount + 1}`,
-      birthDate,
-      gender,
-    });
-    newProfile.save();
 
     return res.status(201).send("user created.");
   } catch (err) {
@@ -88,13 +91,15 @@ export const checkEmailForResetPassword = async (req, res) => {
     const { email } = req.params;
     const user = await User.findOne({ email });
     if (user) {
-      res
-        .status(200)
-        .json({ message: "This email address is associated with an account." });
+      res.status(200).json({
+        success: true,
+        message: "This email address is associated with an account.",
+      });
     } else {
-      res
-        .status(409)
-        .json({ message: "This email address is not registered." });
+      res.status(200).json({
+        success: false,
+        message: "This email address is not registered.",
+      });
     }
   } catch (err) {
     return handleError(err, res);
@@ -134,13 +139,13 @@ export const login = async (req, res) => {
           expiresIn: "10m",
         }
       );
-      user.verificationStatus.verificationToken = verificationToken;
       // send email with verification code if the email isn't verified
       await sendAccountVerificationCode(
         email,
         verificationCode,
         verificationToken
       );
+      user.verificationStatus.verificationToken = verificationToken;
       await user.save();
       return res.status(401).json({
         isVerified,
@@ -159,17 +164,24 @@ export const login = async (req, res) => {
     const profile = await Profile.findById(user.id);
 
     // send the users's contact with activity status
+    const contactMap = new Map(
+      user.contacts.map((c) => [c._id.toString(), c.conversationId])
+    );
+
     const profiles = await Profile.find({
-      _id: { $in: user.contacts.map((c) => c._id) },
+      _id: { $in: Array.from(contactMap.keys()) },
     }).select(
       "id firstName lastName username profilePicPath coverPicPath bio gender followersCount followingCount lastSeenAt"
     );
-    const contacts = profiles.map((profile) => ({
-      ...profile.toObject(),
-      conversationId: user.contacts.find((c) => c.id === profile.id)
-        .conversationId,
-      isOnline: profile.lastSeenAt ? false : true,
-    }));
+
+    const contacts = profiles.map((profile) => {
+      const profileObj = profile.toObject();
+      return {
+        ...profileObj,
+        conversationId: contactMap.get(profileObj._id.toString()),
+        isOnline: !profile.lastSeenAt,
+      };
+    });
 
     return res.status(200).json({
       isVerified,

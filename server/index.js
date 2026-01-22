@@ -25,6 +25,7 @@ import conversationRoute from "./routes/conversation.js";
 import notificationRoute from "./routes/notification.js";
 import messageRoute from "./routes/message.js";
 import searchRoute from "./routes/search.js";
+import adminRoute from "./routes/admin.js";
 
 import { setProfile } from "./controllers/profile.js";
 import { getFeedPosts } from "./controllers/posts.js";
@@ -58,8 +59,8 @@ app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("short"));
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(bodyParser.json({ limit: "200mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "200mb", extended: true }));
 app.use(cors());
 app.use("/storage", express.static(path.join(__dirname, "public/storage")));
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
@@ -72,7 +73,11 @@ const storage = multer.diskStorage({
     cb(null, "public/storage");
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const ext = (path.extname(file.originalname) || "")
+      .slice(0, 10)
+      .toLowerCase();
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`;
+    cb(null, uniqueName);
   },
 });
 const upload = multer({ storage });
@@ -92,7 +97,7 @@ app.post(
   "/api/post/create",
   verifyId,
   verifyToken,
-  upload.fields([{ name: "media", maxCount: 100 }]),
+  upload.fields([{ name: "media" }]),
   compressImages,
   createPost
 );
@@ -100,7 +105,7 @@ app.post(
   "/api/post/share/",
   verifyId,
   verifyToken,
-  upload.fields([{ name: "media", maxCount: 5 }]),
+  upload.fields([{ name: "media" }]),
   compressImages,
   sharePost
 );
@@ -108,7 +113,7 @@ app.post(
   "/api/message/send",
   verifyId,
   verifyToken,
-  upload.fields([{ name: "media", maxCount: 10 }]),
+  upload.fields([{ name: "media" }]),
   compressImages,
   getConversationInfo,
   isInChat,
@@ -118,7 +123,7 @@ app.post(
   "/api/message/send_first_time",
   verifyId,
   verifyToken,
-  upload.fields([{ name: "media", maxCount: 10 }]),
+  upload.fields([{ name: "media" }]),
   compressImages,
   newConversationByMessaging,
   create
@@ -127,7 +132,7 @@ app.post(
   "/api/message/reply",
   verifyId,
   verifyToken,
-  upload.fields([{ name: "media", maxCount: 10 }]),
+  upload.fields([{ name: "media" }]),
   compressImages,
   getConversationInfo,
   isInChat,
@@ -165,6 +170,7 @@ app.use("/api/notifications", notificationRoute);
 app.use("/api/conversation", conversationRoute);
 app.use("/api/message", messageRoute);
 app.use("/api/search", searchRoute);
+app.use("/api/admin", adminRoute);
 
 /*MONGOOSE SETUP*/
 connectDB();

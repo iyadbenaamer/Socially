@@ -42,7 +42,6 @@ export const newConversationByFollow = async (req, res, next) => {
       _id: accountToMessageId,
       conversationId: conversation.id,
     });
-    user.conversations.addToSet(conversation);
     await user.save();
 
     const userToMessage = await User.findById(accountToMessageId);
@@ -50,7 +49,6 @@ export const newConversationByFollow = async (req, res, next) => {
       _id: myId,
       conversationId: conversation.id,
     });
-    userToMessage.conversations.addToSet(conversation);
     await userToMessage.save();
 
     conversation.participants.map(async (participant) => {
@@ -123,7 +121,6 @@ export const newConversationByMessaging = async (req, res, next) => {
       _id: accountToMessageId,
       conversationId: conversation.id,
     });
-    user.conversations.addToSet(conversation);
     await user.save();
 
     const userToMessage = await User.findById(accountToMessageId);
@@ -131,7 +128,6 @@ export const newConversationByMessaging = async (req, res, next) => {
       _id: myId,
       conversationId: conversation.id,
     });
-    userToMessage.conversations.addToSet(conversation);
     await userToMessage.save();
     req.conversation = conversation;
 

@@ -16,7 +16,6 @@ const UserSchema = new Schema(
       rel: "User",
       default: [],
     },
-    conversations: [{ type: ObjectId, ref: "Conversation" }],
     unreadMessagesCount: { type: Number, default: 0, min: 0 },
     unreadNotificationsCount: { type: Number, default: 0, min: 0 },
     /*
