@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import axiosClient from "utils/AxiosClient";
 import { removeNotification, setShowMessage } from "state";
 
-import { ReactComponent as TrashIcon } from "assets/icons/trash-basket.svg";
+import TrashIcon from "assets/icons/trash-basket.svg?react";
 
 const Delete = (props) => {
   const { id } = props;
@@ -19,7 +19,7 @@ const Delete = (props) => {
           setShowMessage({
             message: "Notification deleted.",
             type: "info",
-          })
+          }),
         );
       })
       .catch((err) => {
@@ -29,14 +29,14 @@ const Delete = (props) => {
             setShowMessage({
               message: err.response.data.message,
               type: "error",
-            })
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       });

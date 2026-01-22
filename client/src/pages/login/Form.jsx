@@ -14,8 +14,8 @@ import SubmitBtn from "components/SubmitBtn";
 
 import axiosClient from "utils/AxiosClient";
 
-import { ReactComponent as ShowPasswordIcon } from "assets/icons/eye.svg";
-import { ReactComponent as HidePasswordIcon } from "assets/icons/hide.svg";
+import ShowPasswordIcon from "assets/icons/eye.svg?react";
+import HidePasswordIcon from "assets/icons/hide.svg?react";
 import { connectToSocketServer } from "hooks/useHandleSocket";
 
 const Form = () => {
@@ -60,7 +60,7 @@ const Form = () => {
             message: "",
             isLoggedin: true,
             isVerified,
-          })
+          }),
         );
       })
       .catch((error) => {
@@ -74,7 +74,7 @@ const Form = () => {
               isLoggedin: true,
               message: message,
               isVerified,
-            })
+            }),
           );
         } else {
           dispatch(
@@ -83,7 +83,7 @@ const Form = () => {
               isLoggedin: false,
               message: message,
               isVerified: false,
-            })
+            }),
           );
         }
       });
@@ -163,7 +163,7 @@ const Form = () => {
               className="absolute w-5 right-[5px] top-[8px]"
               onClick={() =>
                 setPasswordInputType(
-                  passwordInputType === "password" ? "text" : "password"
+                  passwordInputType === "password" ? "text" : "password",
                 )
               }
             >

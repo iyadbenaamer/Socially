@@ -4,8 +4,8 @@ import { setShowMessage } from "state";
 
 import axiosClient from "utils/AxiosClient";
 
-import { ReactComponent as SaveIcon } from "assets/icons/save.svg";
-import { ReactComponent as UnsaveIcon } from "assets/icons/unsave.svg";
+import SaveIcon from "assets/icons/save.svg?react";
+import UnsaveIcon from "assets/icons/unsave.svg?react";
 
 const SavePost = (props) => {
   const { id, isSaved, setIsSaved } = props;
@@ -29,14 +29,14 @@ const SavePost = (props) => {
             setShowMessage({
               message: err.response.data.message,
               type: "error",
-            })
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       });

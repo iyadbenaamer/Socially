@@ -1,4 +1,4 @@
-import { ReactComponent as TrashIcon } from "assets/icons/copy.svg";
+import TrashIcon from "assets/icons/copy.svg?react";
 
 const CopyLink = (props) => {
   const { replyPath } = props;

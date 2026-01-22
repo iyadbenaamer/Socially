@@ -8,7 +8,7 @@ import CopyLink from "./CopyLink";
 import { PostContext } from "components/post";
 import useCloseWidget from "hooks/useCloseWidget";
 
-import { ReactComponent as MoreIcon } from "assets/icons/more.svg";
+import MoreIcon from "assets/icons/more.svg?react";
 
 const OptionsBtn = ({ commentId, commentCreatorId, setIsModifying }) => {
   // Get current user ID from Redux store

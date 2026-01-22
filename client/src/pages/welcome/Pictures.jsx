@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
-import { ReactComponent as AddPhotoIcon } from "assets/icons/add-photo.svg";
-import { ReactComponent as CloseIcon } from "assets/icons/cross.svg";
+import AddPhotoIcon from "assets/icons/add-photo.svg?react";
+import CloseIcon from "assets/icons/cross.svg?react";
 
 const Pictures = (props) => {
   const { setData } = props;
@@ -32,7 +32,7 @@ const Pictures = (props) => {
             if (e.target.files[0]) {
               reader.readAsDataURL(e.target.files[0]);
               reader.addEventListener("load", (e) =>
-                setCoverPicPreview(e.currentTarget.result)
+                setCoverPicPreview(e.currentTarget.result),
               );
               setData((prev) => ({ ...prev, coverPic: e.target.files[0] }));
             }
@@ -106,7 +106,7 @@ const Pictures = (props) => {
                 if (e.target.files[0]) {
                   reader.readAsDataURL(e.target.files[0]);
                   reader.addEventListener("load", (e) =>
-                    setProfilePicPreview(e.currentTarget.result)
+                    setProfilePicPreview(e.currentTarget.result),
                   );
                   setData((prev) => ({
                     ...prev,

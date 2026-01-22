@@ -6,9 +6,9 @@ import { clearSessionStorage, setAuthStatus, setProfile } from "state/index.js";
 
 import axiosClient from "utils/AxiosClient.js";
 
-import { ReactComponent as TickIcon } from "assets/icons/tick.svg";
-import { ReactComponent as InfoIcon } from "assets/icons/info.svg";
-import { ReactComponent as RedCrossIcon } from "assets/icons/red-cross.svg";
+import TickIcon from "assets/icons/tick.svg?react";
+import InfoIcon from "assets/icons/info.svg?react";
+import RedCrossIcon from "assets/icons/red-cross.svg?react";
 
 const VerifyAccountByLink = () => {
   const { isVerified } = useSelector((state) => state.authStatus);
@@ -35,7 +35,7 @@ const VerifyAccountByLink = () => {
               token,
               isVerified: true,
               email: email,
-            })
+            }),
           );
           setIsLoading(false);
         })
@@ -49,7 +49,7 @@ const VerifyAccountByLink = () => {
             }, 3000);
           } else {
             setMessage(
-              "Invalid or expired verification link. Please try again."
+              "Invalid or expired verification link. Please try again.",
             );
             setIsError(true);
           }

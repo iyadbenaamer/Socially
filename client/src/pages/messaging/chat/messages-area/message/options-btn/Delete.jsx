@@ -11,7 +11,7 @@ import { SelectedChatContext } from "pages/messaging";
 import { useDialog } from "components/dialog/DialogContext";
 import { setShowMessage } from "state";
 
-import { ReactComponent as TrashIcon } from "assets/icons/trash-basket.svg";
+import TrashIcon from "assets/icons/trash-basket.svg?react";
 
 const Delete = ({ id }) => {
   const { conversationId } = useParams();
@@ -24,19 +24,22 @@ const Delete = ({ id }) => {
   const deleteMessage = async () => {
     await axiosClient
       .delete(
-        `message/delete?conversationId=${conversationId}&messageId=${id}&forEveryone=${forEveryone}`
+        `message/delete?conversationId=${conversationId}&messageId=${id}&forEveryone=${forEveryone}`,
       )
       .catch((err) => {
         if (err.response) {
           dispatch(
-            setShowMessage({ message: err.response?.data, type: "error" })
+            setShowMessage({
+              message: err.response?.data?.message,
+              type: "error",
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       })
@@ -64,7 +67,7 @@ const Delete = ({ id }) => {
           <PrimaryBtn onClick={closeDialog}>Cancel</PrimaryBtn>
           <RedBtn onClick={deleteMessage}>Delete</RedBtn>
         </div>
-      </div>
+      </div>,
     );
   };
 

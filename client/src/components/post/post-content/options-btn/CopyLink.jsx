@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 
 import { setShowMessage } from "state";
 
-import { ReactComponent as CopyIcon } from "assets/icons/copy.svg";
+import CopyIcon from "assets/icons/copy.svg?react";
 
 const CopyLink = (props) => {
   const { id } = props;
@@ -14,7 +14,7 @@ const CopyLink = (props) => {
           className="flex w-full gap-2 p-3 bg-hovered"
           onClick={() => {
             navigator.clipboard.writeText(
-              `${window.location.host}/post?_id=${id}`
+              `${window.location.host}/post?_id=${id}`,
             );
             dispatch(setShowMessage({ message: "Link copied.", type: "info" }));
           }}

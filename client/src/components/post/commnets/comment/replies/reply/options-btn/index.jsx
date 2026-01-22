@@ -9,7 +9,7 @@ import CopyLink from "./CopyLink";
 
 import { PostContext } from "components/post";
 
-import { ReactComponent as MoreIcon } from "assets/icons/more.svg";
+import MoreIcon from "assets/icons/more.svg?react";
 
 const OptionsBtn = ({ commentId, replyId, replyCreatorId, setIsModifying }) => {
   // Get current logged-in user ID from Redux store

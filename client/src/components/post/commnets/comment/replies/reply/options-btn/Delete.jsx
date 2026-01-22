@@ -11,7 +11,7 @@ import axiosClient from "utils/AxiosClient";
 import { RepliesContext } from "../..";
 import { CommentContext } from "../../..";
 
-import { ReactComponent as TrashIcon } from "assets/icons/trash-basket.svg";
+import TrashIcon from "assets/icons/trash-basket.svg?react";
 
 const Delete = ({ commentId, replyId }) => {
   const { _id: postId, creatorId } = useContext(PostContext);
@@ -23,7 +23,7 @@ const Delete = ({ commentId, replyId }) => {
   const deleteReply = async () => {
     await axiosClient
       .delete(
-        `reply/delete?userId=${creatorId}&postId=${postId}&commentId=${commentId}&replyId=${replyId}`
+        `reply/delete?userId=${creatorId}&postId=${postId}&commentId=${commentId}&replyId=${replyId}`,
       )
       .then(() => {
         setReplies((prev) => prev.filter((reply) => reply._id !== replyId));
@@ -38,14 +38,14 @@ const Delete = ({ commentId, replyId }) => {
             setShowMessage({
               message: err.response.data.message,
               type: "error",
-            })
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       })
@@ -65,7 +65,7 @@ const Delete = ({ commentId, replyId }) => {
           <PrimaryBtn onClick={closeDialog}>Cancel</PrimaryBtn>
           <RedBtn onClick={deleteReply}>Delete</RedBtn>
         </div>
-      </div>
+      </div>,
     );
   };
 

@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import Lottie from "react-lottie";
 
-import { ReactComponent as ShowPasswordIcon } from "assets/icons/eye.svg";
-import { ReactComponent as HidePasswordIcon } from "assets/icons/hide.svg";
+import ShowPasswordIcon from "assets/icons/eye.svg?react";
+import HidePasswordIcon from "assets/icons/hide.svg?react";
 import tickAnimationData from "assets/icons/tick.json";
 import crossAnimationData from "assets/icons/cross.json";
 
@@ -71,7 +71,7 @@ const PasswordInput = (props) => {
 
   useEffect(
     () => setIsValid(check.state === "success" ? true : false),
-    [check]
+    [check],
   );
 
   // Initialize validation when component mounts and fieldValue is available

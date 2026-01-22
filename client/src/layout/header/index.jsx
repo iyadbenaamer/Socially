@@ -10,7 +10,7 @@ import "./index.css";
 
 const Header = () => {
   const isLoggedin = Boolean(
-    useSelector((state) => state.authStatus.isLoggedin)
+    useSelector((state) => state.authStatus.isLoggedin),
   );
   const theme = useSelector((state) => state.settings.theme);
 

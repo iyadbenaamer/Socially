@@ -1,6 +1,6 @@
 import { forwardRef, useState } from "react";
 
-import { ReactComponent as LoadingIcon } from "assets/icons/loading-circle.svg";
+import LoadingIcon from "assets/icons/loading-circle.svg?react";
 
 const SubmitBtn = forwardRef((props, ref) => {
   const { onClick, disabled, children, tabIndex } = props;

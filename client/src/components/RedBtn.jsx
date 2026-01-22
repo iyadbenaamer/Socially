@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ReactComponent as LoadingIcon } from "assets/icons/loading-circle.svg";
+import LoadingIcon from "assets/icons/loading-circle.svg?react";
 
 const RedBtn = (props) => {
   const { onClick, disabled, children } = props;

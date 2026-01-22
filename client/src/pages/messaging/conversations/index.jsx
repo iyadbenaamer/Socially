@@ -8,7 +8,7 @@ import useInfiniteScroll from "hooks/useInfiniteScroll";
 import axiosClient from "utils/AxiosClient";
 import { setConversations } from "state";
 
-import { ReactComponent as LoadingIcon } from "assets/icons/loading-circle.svg";
+import LoadingIcon from "assets/icons/loading-circle.svg?react";
 
 const Conversations = () => {
   const conversations = useSelector((state) => state.conversations);
@@ -46,7 +46,7 @@ const Conversations = () => {
     setIsLoading(true);
     try {
       const response = await axiosClient(
-        `conversation/all?page=${pageRef.current}`
+        `conversation/all?page=${pageRef.current}`,
       );
       const data = response.data;
 
@@ -78,7 +78,7 @@ const Conversations = () => {
     {
       rootMargin: "100px",
       threshold: 0.1,
-    }
+    },
   );
 
   return (

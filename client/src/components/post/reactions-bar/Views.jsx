@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { PostContext } from "..";
 import convertToUnit from "utils/convertToUnit";
 
-import { ReactComponent as ViewsIcon } from "assets/icons/eye.svg";
+import ViewsIcon from "assets/icons/eye.svg?react";
 
 const Views = () => {
   const { views } = useContext(PostContext);

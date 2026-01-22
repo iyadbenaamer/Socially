@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import useCloseWidget from "hooks/useCloseWidget";
 
-import { ReactComponent as MoreIcon } from "assets/icons/more.svg";
+import MoreIcon from "assets/icons/more.svg?react";
 import Delete from "./Delete";
 import Clear from "./Clear";
 

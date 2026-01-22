@@ -10,7 +10,7 @@ import { setShowMessage } from "state";
 import { useDialog } from "components/dialog/DialogContext";
 import { ConversationContext } from "..";
 
-import { ReactComponent as BrushIcon } from "assets/icons/brush.svg";
+import BrushIcon from "assets/icons/brush.svg?react";
 
 const Clear = ({ conversationId }) => {
   const { openDialog, closeDialog } = useDialog();
@@ -22,14 +22,14 @@ const Clear = ({ conversationId }) => {
   const clearConversation = async () => {
     await axiosClient
       .patch(
-        `conversation/clear?conversationId=${conversationId}&forEveryone=${forEveryone}`
+        `conversation/clear?conversationId=${conversationId}&forEveryone=${forEveryone}`,
       )
       .then(() => {
         document.body.style = null;
         closeDialog();
 
         dispatch(
-          setShowMessage({ message: "Conversation cleared.", type: "info" })
+          setShowMessage({ message: "Conversation cleared.", type: "info" }),
         );
       });
   };
@@ -52,7 +52,7 @@ const Clear = ({ conversationId }) => {
           <PrimaryBtn onClick={closeDialog}>Cancel</PrimaryBtn>
           <RedBtn onClick={clearConversation}>Clear</RedBtn>
         </div>
-      </div>
+      </div>,
     );
   };
 

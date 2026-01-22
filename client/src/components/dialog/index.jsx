@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { ReactComponent as CloseIcon } from "assets/icons/cross.svg";
+import CloseIcon from "assets/icons/cross.svg?react";
 import useCloseWidget from "hooks/useCloseWidget";
 import { useLocation } from "react-router-dom";
 

@@ -13,7 +13,7 @@ import { PostContext } from "components/post";
 import useGetTime from "hooks/useGetTime";
 import convertToUnit from "utils/convertToUnit";
 
-import { ReactComponent as CommentIcon } from "assets/icons/comments.svg";
+import CommentIcon from "assets/icons/comments.svg?react";
 import HoverWrapper from "components/user-hover-card/HoverWrapper";
 import { useSelector } from "react-redux";
 
@@ -43,7 +43,7 @@ const Comment = (props) => {
   const [isSearchReplyRendered, setIsSearchReplyRendered] = useState(false);
 
   const [showReplies, setShowReplies] = useState(
-    Boolean(replyIdParam) && commentIdParam === id
+    Boolean(replyIdParam) && commentIdParam === id,
   );
   const time = useGetTime(createdAt);
   if (!(props.comment && profile)) return null;

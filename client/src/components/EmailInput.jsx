@@ -7,7 +7,7 @@ import { setShowMessage } from "state";
 
 import tickAnimationData from "assets/icons/tick.json";
 import crossAnimationData from "assets/icons/cross.json";
-import { ReactComponent as LoadingIcon } from "assets/icons/loading-circle.svg";
+import LoadingIcon from "assets/icons/loading-circle.svg?react";
 
 const EmailInput = (props) => {
   const { fieldValue, setData, setIsValid, type, placeholder } = props;
@@ -59,7 +59,7 @@ const EmailInput = (props) => {
             setShowMessage({
               message: "An error occurred. Plaese try again later.",
               type: "error",
-            })
+            }),
           );
         })
         .finally(() => {
@@ -80,7 +80,7 @@ const EmailInput = (props) => {
 
   useEffect(
     () => setIsValid(check.state === "success" ? true : false),
-    [check]
+    [check],
   );
 
   useEffect(() => {

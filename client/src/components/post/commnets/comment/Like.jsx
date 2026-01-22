@@ -11,7 +11,7 @@ import axiosClient from "utils/AxiosClient";
 import { setShowMessage } from "state";
 
 import animationData from "assets/icons/like.json";
-import { ReactComponent as LikeIcon } from "assets/icons/like.svg";
+import LikeIcon from "assets/icons/like.svg?react";
 
 const Like = (props) => {
   const { postId, userId, commentId } = props;
@@ -63,14 +63,14 @@ const Like = (props) => {
     } catch (err) {
       if (err.response) {
         dispatch(
-          setShowMessage({ message: err.response.data.message, type: "error" })
+          setShowMessage({ message: err.response.data.message, type: "error" }),
         );
       } else {
         dispatch(
           setShowMessage({
             message: "An error occurred. Please try again later.",
             type: "error",
-          })
+          }),
         );
       }
       // Rollback on error

@@ -9,7 +9,7 @@ import { useDialog } from "components/dialog/DialogContext";
 import axiosClient from "utils/AxiosClient";
 import { setShowMessage } from "state";
 
-import { ReactComponent as TrashIcon } from "assets/icons/trash-basket.svg";
+import TrashIcon from "assets/icons/trash-basket.svg?react";
 
 const Delete = ({ commentId }) => {
   const { _id: postId, creatorId } = useContext(PostContext);
@@ -21,18 +21,18 @@ const Delete = ({ commentId }) => {
   const deleteComment = async () => {
     await axiosClient
       .delete(
-        `comment/delete?userId=${creatorId}&postId=${postId}&commentId=${commentId}`
+        `comment/delete?userId=${creatorId}&postId=${postId}&commentId=${commentId}`,
       )
       .then(() => {
         setComments((prev) =>
-          prev.filter((comment) => comment._id !== commentId)
+          prev.filter((comment) => comment._id !== commentId),
         );
         setPost((prev) => ({
           ...prev,
           commentsCount: prev.commentsCount - 1,
         }));
         dispatch(
-          setShowMessage({ message: "Comment is deleted.", type: "info" })
+          setShowMessage({ message: "Comment is deleted.", type: "info" }),
         );
       })
       .catch((err) => {
@@ -42,20 +42,20 @@ const Delete = ({ commentId }) => {
             commentsCount: prev.commentsCount - 1,
           }));
           setComments((prev) =>
-            prev.filter((comment) => comment._id !== commentId)
+            prev.filter((comment) => comment._id !== commentId),
           );
           dispatch(
             setShowMessage({
               message: err.response.data.message,
               type: "error",
-            })
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       })
@@ -75,7 +75,7 @@ const Delete = ({ commentId }) => {
           <PrimaryBtn onClick={closeDialog}>Cancel</PrimaryBtn>
           <RedBtn onClick={deleteComment}>Delete</RedBtn>
         </div>
-      </div>
+      </div>,
     );
   };
 

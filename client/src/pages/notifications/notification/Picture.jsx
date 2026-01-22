@@ -1,13 +1,13 @@
 import PreloadedImage from "components/PreloadedImage";
 
-import { ReactComponent as LikeIcon } from "assets/icons/like.svg";
-import { ReactComponent as CommentIcon } from "assets/icons/comments.svg";
-import { ReactComponent as ShareIcon } from "assets/icons/share.svg";
+import LikeIcon from "assets/icons/like.svg?react";
+import CommentIcon from "assets/icons/comments.svg?react";
+import ShareIcon from "assets/icons/share.svg?react";
 
 const Picture = (props) => {
   const { profile, notificationType } = props;
   const isLikeType = new Array("postLike", "commentLike", "replyLike").includes(
-    notificationType
+    notificationType,
   );
   return (
     <div className="relative">

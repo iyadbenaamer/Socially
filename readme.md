@@ -55,17 +55,16 @@ Follow these steps to set up the project:
 2. **Set up environment variables:**
 
    You will need to create `.env` files in both the `client` and `server` directories.
-
    - **Client `.env` (located in `/client/.env`):**
 
      ```env
-     REACT_APP_APP_URL=http://localhost:5000
+     VITE_APP_URL=http://localhost:5000
      ```
 
    - **Server `.env` (located in `/server/.env`):**
 
      ```env
-     APP_URL=http://localhost:3000
+     APP_URL=http://localhost:5173
      API_URL=http://localhost:5000
      GMAIL_USER=<your Gmail>
      GMAIL_PASSWORD=<your email password>
@@ -82,7 +81,6 @@ Follow these steps to set up the project:
 3. **Install dependencies:**
 
    Open two terminal windows or tabs:
-
    - In the first terminal, navigate to the client directory, install dependencies, and start the client:
 
      ```bash
@@ -114,7 +112,7 @@ Follow these steps to set up the project:
 
 Once both the client and server are running, the application should be available at:
 
-- **Client (Frontend):** `http://localhost:3000`
+- **Client (Frontend):** `http://localhost:5173`
 - **Server (Backend):** `http://localhost:5000`
 
 You can now use the app locally.

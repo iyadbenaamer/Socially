@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { setNotificationIsRead } from "state";
 import axiosClient from "utils/AxiosClient";
 
-import { ReactComponent as EyeIcon } from "assets/icons/eye.svg";
+import EyeIcon from "assets/icons/eye.svg?react";
 
 const SetRead = (props) => {
   const { id } = props;

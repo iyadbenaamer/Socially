@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { ReactComponent as NextIcon } from "assets/icons/arrow-right.svg";
-import { ReactComponent as PrevIcon } from "assets/icons/arrow-left.svg";
+import NextIcon from "assets/icons/arrow-right.svg?react";
+import PrevIcon from "assets/icons/arrow-left.svg?react";
 
 const ToggleButtons = (props) => {
   const { currentSlide, setCurrentSlide, slidesCount } = props;

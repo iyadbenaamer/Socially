@@ -26,7 +26,9 @@ export const connectToSocketServer = () => {
   }
   // if socket object is undefined then establish a socket connection
   if (!socket) {
-    socket = io(process.env.REACT_APP_APP_URL, { auth: { token } });
+    socket = io(import.meta.env.VITE_APP_URL, {
+      auth: { token },
+    });
     return;
   }
   /*
@@ -35,7 +37,9 @@ export const connectToSocketServer = () => {
   */
   if (!socket.connected) {
     socket.close();
-    socket = io(process.env.REACT_APP_APP_URL, { auth: { token } });
+    socket = io(import.meta.env.VITE_APP_URL, {
+      auth: { token },
+    });
   }
 };
 
@@ -55,7 +59,7 @@ const useHandleSocket = () => {
           setShowMessage({
             message: "Connection restored. You're back online.",
             type: "info",
-          })
+          }),
         );
         wasDisconnectedRef.current = false;
       }
@@ -67,7 +71,7 @@ const useHandleSocket = () => {
           setShowMessage({
             message: "Connection lost. Please check your internet connection.",
             type: "error",
-          })
+          }),
         );
       } catch (error) {}
     };
@@ -75,7 +79,7 @@ const useHandleSocket = () => {
     // Core domain event listeners
     socket.on("contact-connected", (data) => {
       dispatch(
-        updateActivityStatus({ id: data.id, isOnline: true, lastSeenAt: null })
+        updateActivityStatus({ id: data.id, isOnline: true, lastSeenAt: null }),
       );
     });
     socket.on("contact-disconnected", (data) => {
@@ -84,7 +88,7 @@ const useHandleSocket = () => {
           id: data.id,
           isOnline: false,
           lastSeenAt: Date.now(),
-        })
+        }),
       );
     });
     socket.on("send-message", (data) => {

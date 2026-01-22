@@ -13,7 +13,9 @@ const OthersMessage = (props) => {
       <div
         className={`${colors} flex flex-col rounded-xl shadow-md min-w-[100px] max-w-[80%] sm:max-w-[60%]`}
       >
-        <div className="px-2 pt-1 -mb-1">{text}</div>
+        <div className="px-2 pt-1 -mb-1 text-wrap text-ellipsis overflow-clip">
+          {text}
+        </div>
         <div className="self-end flex items-center">
           <Time withDate={false} date={createdAt} />
           <Status info={info} />

@@ -50,6 +50,6 @@ root.render(
         <App />
       </Suspense>
     </PersistGate>
-  </Provider>
+  </Provider>,
   // </StrictMode>
 );

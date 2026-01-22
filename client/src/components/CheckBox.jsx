@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import { ReactComponent as SingleTickIcon } from "assets/icons/single-tick.svg";
+import SingleTickIcon from "assets/icons/single-tick.svg?react";
 
 const CheckBox = ({ onCheck }) => {
   const [checked, setChecked] = useState(false);

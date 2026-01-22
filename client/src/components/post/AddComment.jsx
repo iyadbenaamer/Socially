@@ -6,9 +6,9 @@ import { PostContext } from ".";
 
 import axiosClient from "utils/AxiosClient";
 
-import { ReactComponent as PhotoIcon } from "assets/icons/photo.svg";
-import { ReactComponent as AddCommentIcon } from "assets/icons/create-comment.svg";
-import { ReactComponent as CloseIcon } from "assets/icons/cross.svg";
+import PhotoIcon from "assets/icons/photo.svg?react";
+import AddCommentIcon from "assets/icons/create-comment.svg?react";
+import CloseIcon from "assets/icons/cross.svg?react";
 import { setShowMessage } from "state";
 
 const AddComment = (props) => {
@@ -58,7 +58,7 @@ const AddComment = (props) => {
             setShowMessage({
               message: err.response.data?.message,
               type: "error",
-            })
+            }),
           );
           setIsCommentsDisabled(true);
         } else {
@@ -66,7 +66,7 @@ const AddComment = (props) => {
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       });
@@ -107,7 +107,11 @@ const AddComment = (props) => {
               placeholder={
                 type === "reply" ? "Write a reply" : "Write a comment"
               }
-              onChange={(e) => setText(e.target.value.trimStart())}
+              onChange={(e) => {
+                if (e.target.value.length <= 10000) {
+                  setText(e.target.value);
+                }
+              }}
             ></textarea>
             <div className="flex justify-end w-1/5">
               <input
@@ -120,7 +124,7 @@ const AddComment = (props) => {
                   if (e.target.files[0]) {
                     reader.readAsDataURL(e.target.files[0]);
                     reader.addEventListener("load", (e) =>
-                      setFile(e.currentTarget.result)
+                      setFile(e.currentTarget.result),
                     );
                     setMedia(e.target.files[0]);
                   }

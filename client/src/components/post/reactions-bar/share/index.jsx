@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Form from "./Form";
 import Dialog from "components/dialog";
 
-import { ReactComponent as ShareIcon } from "assets/icons/share.svg";
+import ShareIcon from "assets/icons/share.svg?react";
 
 const Share = () => {
   const navigate = useNavigate();

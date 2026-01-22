@@ -7,7 +7,7 @@ import axiosClient from "utils/AxiosClient";
 import { setShowMessage } from "state";
 import { useDialog } from "components/dialog/DialogContext";
 
-import { ReactComponent as TrashIcon } from "assets/icons/trash-basket.svg";
+import TrashIcon from "assets/icons/trash-basket.svg?react";
 
 const Delete = ({ conversationId }) => {
   const { openDialog, closeDialog } = useDialog();
@@ -21,7 +21,7 @@ const Delete = ({ conversationId }) => {
         document.body.style = null;
         closeDialog();
         dispatch(
-          setShowMessage({ message: "Conversation deleted.", type: "info" })
+          setShowMessage({ message: "Conversation deleted.", type: "info" }),
         );
       });
   };
@@ -36,7 +36,7 @@ const Delete = ({ conversationId }) => {
           <PrimaryBtn onClick={closeDialog}>Cancel</PrimaryBtn>
           <RedBtn onClick={deleteConversation}>Delete</RedBtn>
         </div>
-      </div>
+      </div>,
     );
   };
 

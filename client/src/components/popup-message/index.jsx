@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowMessage } from "state";
-import { ReactComponent as CloseIcon } from "assets/icons/cross.svg";
+import CloseIcon from "assets/icons/cross.svg?react";
 import "./index.css";
 
 const PopupMessage = () => {

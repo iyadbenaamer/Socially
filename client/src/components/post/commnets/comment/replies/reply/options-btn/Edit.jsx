@@ -1,4 +1,4 @@
-import { ReactComponent as EditIcon } from "assets/icons/edit.svg";
+import EditIcon from "assets/icons/edit.svg?react";
 
 const Edit = (props) => {
   const { setIsModifying } = props;

@@ -3,11 +3,11 @@ import { useLocation } from "react-router-dom";
 
 import BarItem from "./BarItem";
 
-import { ReactComponent as HomeIcon } from "assets/icons/home.svg";
-import { ReactComponent as NotificationsIcon } from "assets/icons/notifications.svg";
-import { ReactComponent as MessagesIcon } from "assets/icons/message-text.svg";
-import { ReactComponent as SavedPostsIcon } from "assets/icons/saved-posts.svg";
-import { ReactComponent as SearchIcon } from "assets/icons/search.svg";
+import HomeIcon from "assets/icons/home.svg?react";
+import NotificationsIcon from "assets/icons/notifications.svg?react";
+import MessagesIcon from "assets/icons/message-text.svg?react";
+import SavedPostsIcon from "assets/icons/saved-posts.svg?react";
+import SearchIcon from "assets/icons/search.svg?react";
 import UserPicture from "components/UserPicture";
 
 const Bar = () => {
@@ -16,7 +16,7 @@ const Bar = () => {
 
   const unreadMessagesCount = useSelector((state) => state.unreadMessagesCount);
   const unreadNotificationsCount = useSelector(
-    (state) => state.unreadNotificationsCount
+    (state) => state.unreadNotificationsCount,
   );
 
   return (

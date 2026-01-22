@@ -19,7 +19,7 @@ import axiosClient from "utils/AxiosClient";
 import Time from "components/time";
 import useInfiniteScroll from "hooks/useInfiniteScroll";
 
-import { ReactComponent as LoadingIcon } from "assets/icons/loading-circle.svg";
+import LoadingIcon from "assets/icons/loading-circle.svg?react";
 
 const MessagesArea = (props) => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const MessagesArea = (props) => {
 
   const firstUnreadMessageId = useMemo(
     () => conversation.messages[props.unreadMessagesCount - 1]?._id,
-    [conversation.messages, props.unreadMessagesCount]
+    [conversation.messages, props.unreadMessagesCount],
   );
 
   // Reset pagination state when conversation changes
@@ -105,7 +105,7 @@ const MessagesArea = (props) => {
     setIsLoading(true);
     try {
       const response = await axiosClient(
-        `/conversation/?conversationId=${conversation._id}&page=${page}`
+        `/conversation/?conversationId=${conversation._id}&page=${page}`,
       );
 
       const { _id: id, messages } = response?.data;
@@ -135,7 +135,7 @@ const MessagesArea = (props) => {
     {
       rootMargin: "100px",
       threshold: 0.1,
-    }
+    },
   );
 
   if (isClosed) {
@@ -151,7 +151,7 @@ const MessagesArea = (props) => {
       {conversation?.messages?.map((message, i) => {
         const thisMessageDate = new Date(message.createdAt);
         const nextMessageDate = new Date(
-          conversation.messages[i + 1]?.createdAt
+          conversation.messages[i + 1]?.createdAt,
         );
         const isToday =
           thisMessageDate.getDate() === nextMessageDate.getDate() &&

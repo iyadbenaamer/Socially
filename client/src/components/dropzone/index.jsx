@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 
 import File from "./File";
 
-import { ReactComponent as AddIcon } from "assets/icons/add.svg";
+import AddIcon from "assets/icons/add.svg?react";
 
 const DropZone = (props) => {
   const { files, setFiles } = props;
@@ -47,7 +47,6 @@ const DropZone = (props) => {
       <input
         type="file"
         name="media"
-        multiple
         ref={input}
         accept="video/*, video/x-m4v, video/webm, video/x-ms-wmv, video/x-msvideo, video/3gpp, video/flv, video/x-flv, video/mp4, video/quicktime, video/mpeg, video/ogv, .ts, .mkv, image/*, image/heic, image/heif"
         style={{ display: "none" }}

@@ -10,7 +10,7 @@ import convertToUnit from "utils/convertToUnit";
 import axiosClient from "utils/AxiosClient";
 
 import animationData from "assets/icons/like.json";
-import { ReactComponent as LikeIcon } from "assets/icons/like.svg";
+import LikeIcon from "assets/icons/like.svg?react";
 import { setShowMessage } from "state";
 
 const Like = (props) => {
@@ -63,14 +63,14 @@ const Like = (props) => {
     } catch (err) {
       if (err.response) {
         dispatch(
-          setShowMessage({ message: err.response.data.message, type: "error" })
+          setShowMessage({ message: err.response.data.message, type: "error" }),
         );
       } else {
         dispatch(
           setShowMessage({
             message: "An error occurred. Please try again later.",
             type: "error",
-          })
+          }),
         );
       }
       // Rollback on error

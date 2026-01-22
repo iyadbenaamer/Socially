@@ -1,5 +1,5 @@
-import { ReactComponent as SingleTickIcon } from "assets/icons/single-tick.svg";
-import { ReactComponent as DoubleTickIcon } from "assets/icons/double-tick.svg";
+import SingleTickIcon from "assets/icons/single-tick.svg?react";
+import DoubleTickIcon from "assets/icons/double-tick.svg?react";
 
 const Status = (props) => {
   const { deliveredTo, readBy } = props.info;

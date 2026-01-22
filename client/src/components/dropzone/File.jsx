@@ -1,4 +1,4 @@
-import { ReactComponent as CloseIcon } from "assets/icons/cross.svg";
+import CloseIcon from "assets/icons/cross.svg?react";
 
 const File = (props) => {
   const { filePreview, file, setFiles, setFilesPreview } = props;

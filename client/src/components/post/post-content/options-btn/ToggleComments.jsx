@@ -5,8 +5,8 @@ import { PostContext } from "components/post";
 
 import axiosClient from "utils/AxiosClient";
 
-import { ReactComponent as CommentsEnabledIcon } from "assets/icons/comments.svg";
-import { ReactComponent as CommentsDisabledIcon } from "assets/icons/comments-turnedoff.svg";
+import CommentsEnabledIcon from "assets/icons/comments.svg?react";
+import CommentsDisabledIcon from "assets/icons/comments-turnedoff.svg?react";
 import { setShowMessage } from "state";
 
 const ToggleComments = () => {
@@ -25,7 +25,7 @@ const ToggleComments = () => {
       .then((response) => {
         setIsCommentsDisabled((prev) => !prev);
         dispatch(
-          setShowMessage({ message: response.data.message, type: "info" })
+          setShowMessage({ message: response.data.message, type: "info" }),
         );
       })
       .catch((err) => {
@@ -34,14 +34,14 @@ const ToggleComments = () => {
             setShowMessage({
               message: err.response.data.message,
               type: "error",
-            })
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       });

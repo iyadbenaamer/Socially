@@ -5,8 +5,8 @@ import { ProfileContext } from ".";
 import Following from "./Following";
 import Followers from "./followers";
 
-import { ReactComponent as LocationIcon } from "assets/icons/location.svg";
-import { ReactComponent as CalenderIcon } from "assets/icons/calender.svg";
+import LocationIcon from "assets/icons/location.svg?react";
+import CalenderIcon from "assets/icons/calender.svg?react";
 
 const AboutUser = () => {
   const { firstName, lastName, username, bio, location, joinedAt } =

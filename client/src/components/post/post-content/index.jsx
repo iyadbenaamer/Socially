@@ -35,7 +35,7 @@ const PostContent = () => {
         </div>
       </div>
       <div className="flex flex-col w-full py-4 sm:px-4">
-        <div className="py-3 px-1">
+        <div className="py-3 px-2">
           <Text
             postCreatorId={creatorId}
             text={text}

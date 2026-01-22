@@ -7,7 +7,7 @@ import { SelectedChatContext } from "..";
 import useGetTime from "./messages-area/message/getTime";
 import useFetchProfile from "hooks/useFetchProfile";
 
-import { ReactComponent as ArrowLeftIcon } from "assets/icons/arrow-left.svg";
+import ArrowLeftIcon from "assets/icons/arrow-left.svg?react";
 
 const ChatBar = () => {
   const { userId } = useParams();
@@ -33,7 +33,7 @@ const ChatBar = () => {
       {participant && (
         <>
           <span className="w-12">
-            <UserPicture profile={participant} />
+            <UserPicture profile={participant} noCard />
           </span>
           <div className="flex flex-col justify-around">
             <Link
@@ -63,7 +63,7 @@ const ChatBar = () => {
       {!participant && nonContactProfile && (
         <>
           <span className="w-12">
-            <UserPicture profile={nonContactProfile} />
+            <UserPicture profile={nonContactProfile} noCard />
           </span>
           <div className="flex flex-col justify-around">
             <Link

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 
-import { ReactComponent as LoadingIcon } from "assets/icons/laoding-app.svg";
+import LoadingIcon from "assets/icons/laoding-app.svg?react";
 
 const Loading = () => {
   const theme = useSelector((state) => state.settings.theme);

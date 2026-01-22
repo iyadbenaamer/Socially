@@ -11,7 +11,7 @@ import Delete from "./Delete";
 
 import { PostContext } from "components/post";
 
-import { ReactComponent as MoreIcon } from "assets/icons/more.svg";
+import MoreIcon from "assets/icons/more.svg?react";
 
 const OptionsBtn = ({ setIsModifying }) => {
   // Destructure post info from context

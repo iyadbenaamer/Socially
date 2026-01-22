@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { toggleTheme } from "state";
 
-import { ReactComponent as MoonIcon } from "assets/icons/moon.svg";
+import MoonIcon from "assets/icons/moon.svg?react";
 
 const ToggleTheme = () => {
   const theme = useSelector((state) => state.settings.theme);

@@ -5,7 +5,7 @@ import Delete from "./Delete";
 
 import useCloseWidget from "hooks/useCloseWidget";
 
-import { ReactComponent as MoreIcon } from "assets/icons/more.svg";
+import MoreIcon from "assets/icons/more.svg?react";
 
 const OptionsBtn = (props) => {
   const { id } = props;

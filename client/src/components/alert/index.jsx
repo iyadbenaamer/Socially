@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { ReactComponent as CloseIcon } from "assets/icons/cross.svg";
-import { ReactComponent as ErrorIcon } from "assets/icons/red-cross.svg";
-import { ReactComponent as InfoIcon } from "assets/icons/info.svg";
-import { ReactComponent as SuccessIcon } from "assets/icons/tick.svg";
-import { ReactComponent as WarningIcon } from "assets/icons/notifications.svg";
+import CloseIcon from "assets/icons/cross.svg?react";
+import ErrorIcon from "assets/icons/red-cross.svg?react";
+import InfoIcon from "assets/icons/info.svg?react";
+import SuccessIcon from "assets/icons/tick.svg?react";
+import WarningIcon from "assets/icons/notifications.svg?react";
 import "./index.css";
 
 const Alert = (props) => {

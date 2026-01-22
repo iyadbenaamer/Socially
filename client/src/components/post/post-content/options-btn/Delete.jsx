@@ -8,7 +8,7 @@ import { PostsContext } from "components/posts";
 
 import axiosClient from "utils/AxiosClient";
 
-import { ReactComponent as TrashIcon } from "assets/icons/trash-basket.svg";
+import TrashIcon from "assets/icons/trash-basket.svg?react";
 import { useDialog } from "components/dialog/DialogContext";
 import { setShowMessage } from "state";
 import { useDispatch } from "react-redux";
@@ -38,14 +38,14 @@ const Delete = () => {
             setShowMessage({
               message: err.response.data.message,
               type: "error",
-            })
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       })
@@ -65,7 +65,7 @@ const Delete = () => {
           <PrimaryBtn onClick={closeDialog}>Cancel</PrimaryBtn>
           <RedBtn onClick={deletePost}>Delete</RedBtn>
         </div>
-      </div>
+      </div>,
     );
   };
 

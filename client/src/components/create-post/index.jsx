@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import Dialog from "components/dialog";
 import Form from "./form";
 
-import { ReactComponent as AddIcon } from "assets/icons/edit.svg";
+import AddIcon from "assets/icons/edit.svg?react";
 
 const CreatePost = () => {
   const profile = useSelector((state) => state.profile);

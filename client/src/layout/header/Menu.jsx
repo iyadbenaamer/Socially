@@ -7,9 +7,9 @@ import { logout, toggleTheme } from "state";
 
 import useCloseWidget from "hooks/useCloseWidget";
 
-import { ReactComponent as DropDownIcon } from "assets/icons/drop-down.svg";
-import { ReactComponent as LogoutIcon } from "assets/icons/logout.svg";
-import { ReactComponent as SettingsIcon } from "assets/icons/settings.svg";
+import DropDownIcon from "assets/icons/drop-down.svg?react";
+import LogoutIcon from "assets/icons/logout.svg?react";
+import SettingsIcon from "assets/icons/settings.svg?react";
 
 const Menu = () => {
   const [showMenu, setShowMenu] = useState(false);

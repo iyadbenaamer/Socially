@@ -5,7 +5,7 @@ import { useWindowWidth } from "hooks/useWindowWidth";
 
 import convertToUnit from "utils/convertToUnit";
 
-import { ReactComponent as CommentIcon } from "assets/icons/comments.svg";
+import CommentIcon from "assets/icons/comments.svg?react";
 
 const Comments = () => {
   const { commentsCount, setShowComments, commentInput } =

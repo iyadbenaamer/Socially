@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { ReactComponent as MessagesIcon } from "assets/icons/message-text.svg";
+import MessagesIcon from "assets/icons/message-text.svg?react";
 
 const MessagingBtn = (props) => {
   const { id: accountToMessageId } = props;

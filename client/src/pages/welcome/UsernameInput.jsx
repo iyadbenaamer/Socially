@@ -5,7 +5,7 @@ import axiosClient from "utils/AxiosClient";
 
 import tickAnimationData from "assets/icons/tick.json";
 import crossAnimationData from "assets/icons/cross.json";
-import { ReactComponent as LoadingIcon } from "assets/icons/loading-circle.svg";
+import LoadingIcon from "assets/icons/loading-circle.svg?react";
 import { useSelector } from "react-redux";
 
 const UsernameInput = (props) => {
@@ -28,7 +28,7 @@ const UsernameInput = (props) => {
   // set isValid whenever "check" is changed
   useEffect(
     () => setIsValid(check.state === "success" ? true : false),
-    [check]
+    [check],
   );
   const [focused, setFocused] = useState(false);
   const [isUsernameChecked, setIsUsernameChecked] = useState(false);

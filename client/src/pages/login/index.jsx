@@ -5,7 +5,7 @@ import { clearSessionStorage, setResetPasswordInfo } from "state";
 
 import Form from "./Form";
 
-import { ReactComponent as LandingPic } from "assets/login.svg";
+import LandingPic from "assets/login.svg?react";
 
 const Login = () => {
   const dispatch = useDispatch();
