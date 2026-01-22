@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 
-import { ReactComponent as SearchIcon } from "assets/icons/search.svg";
-import { ReactComponent as CrossIcon } from "assets/icons/cross.svg";
+import SearchIcon from "assets/icons/search.svg?react";
+import CrossIcon from "assets/icons/cross.svg?react";
 
 const SearchBar = ({
   value,

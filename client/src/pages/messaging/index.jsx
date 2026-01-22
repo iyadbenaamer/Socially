@@ -14,7 +14,7 @@ import { useWindowWidth } from "hooks/useWindowWidth";
 export const SelectedChatContext = createContext();
 
 const Messaging = () => {
-  const { conversationId } = useParams();
+  const { conversationId, userId } = useParams();
   const windowWidth = useWindowWidth();
 
   const myProfile = useSelector((state) => state.profile);
@@ -23,18 +23,18 @@ const Messaging = () => {
   const contacts = useSelector((state) => state.contacts);
   const onlineContactsIds = useMemo(
     () => contacts.filter((contact) => contact.isOnline),
-    [contacts]
+    [contacts],
   );
   const offlineContactsIds = useMemo(
     () => contacts.filter((contact) => !contact.isOnline),
-    [contacts]
+    [contacts],
   );
   const conversations = useSelector((state) => state.conversations);
   const conversation = conversations?.find(
-    (conv) => conv._id === conversationId
+    (conv) => conv._id === conversationId,
   );
   const participantId = conversation?.participants.find(
-    (part) => part._id !== myProfile._id
+    (part) => part._id !== myProfile._id,
   )._id;
 
   // to fetch the other participant's info in the conversation
@@ -59,7 +59,7 @@ const Messaging = () => {
         }}
       >
         {/*the chat is taking the entire screen for small screens*/}
-        {windowWidth < 768 && conversationId && (
+        {windowWidth < 768 && (conversationId || userId) && (
           <div
             className="fixed left-0 z-20 w-full"
             style={{

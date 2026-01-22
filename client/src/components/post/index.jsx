@@ -28,12 +28,12 @@ export const Post = (props) => {
   const commentInput = useRef();
 
   useEffect(() => {
-    if (!post.isViewed) {
+    if (!post.isViewed && profile && profile._id !== post.creatorId) {
       axiosClient
         .patch("/post/set-viewed?postId=" + post._id)
         .catch((err) => {});
     }
-  }, []);
+  }, [post._id, post.creatorId, post.isViewed, profile]);
 
   if (!post) return null;
 

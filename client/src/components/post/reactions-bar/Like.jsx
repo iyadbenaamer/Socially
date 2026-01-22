@@ -13,12 +13,10 @@ import axiosClient from "utils/AxiosClient";
 import { setShowMessage } from "state";
 
 import animationData from "assets/icons/like.json";
-import { ReactComponent as LikeIcon } from "assets/icons/like.svg";
-import { PostsContext } from "components/posts";
+import LikeIcon from "assets/icons/like.svg?react";
 
 const Like = () => {
   const postContext = useContext(PostContext);
-  const setPosts = useContext(PostsContext)?.setPosts;
 
   const { _id: postId, creatorId: userId } = postContext;
 
@@ -68,16 +66,15 @@ const Like = () => {
       });
     } catch (err) {
       if (err.response) {
-        setPosts((prev) => prev.filter((post) => post._id !== postId));
         dispatch(
-          setShowMessage({ message: err.response.data.message, type: "error" })
+          setShowMessage({ message: err.response.data.message, type: "error" }),
         );
       } else {
         dispatch(
           setShowMessage({
             message: "An error occurred. Please try again later.",
             type: "error",
-          })
+          }),
         );
       }
       // Rollback on error
