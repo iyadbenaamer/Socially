@@ -38,7 +38,6 @@ const Following = () => {
   const [cursor, setCursor] = useState("000000000000000000000000"); // last fetched id (cursor)
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const loaderRef = useState(null)[0]; // placeholder to maintain hook order (will set via callback ref)
   const [loaderEl, setLoaderEl] = useState(null); // actual element ref
   const fetchProfiles = async () => {
     if (loading || !hasMore) return;
@@ -57,7 +56,7 @@ const Following = () => {
     ) {
       setHasMore(false);
     }
-    const newCursor = newItems.slice(-1)[0]?._id;
+    const newCursor = newItems.slice(-1)[0]?.followId;
     if (newCursor && newCursor !== cursor) {
       setCursor(newCursor);
     }

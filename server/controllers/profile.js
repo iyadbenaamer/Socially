@@ -98,6 +98,7 @@ export const getFollowers = async (req, res) => {
       {
         $project: {
           _id: "$follower._id",
+          followId: "$_id",
           username: "$follower.username",
           firstName: "$follower.firstName",
           lastName: "$follower.lastName",
@@ -168,7 +169,7 @@ export const getFollowing = async (req, res) => {
       {
         $project: {
           _id: "$followed._id",
-          followId: "_id",
+          followId: "$_id",
           username: "$followed.username",
           firstName: "$followed.firstName",
           lastName: "$followed.lastName",

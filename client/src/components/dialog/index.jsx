@@ -66,15 +66,17 @@ const Dialog = (props) => {
         ref={prompt}
         className="dialog py-2 bg-200 max-h-[100svh] w-[calc(100vw-8px)] rounded-xl md:h-auto md:w-auto"
       >
-        <button
-          className="ms-3 cursor-pointer w-5"
-          onClick={() => setIsOpened(!isOpened)}
-        >
-          <CloseIcon className="icon-hover hover:text-white" />
-        </button>
-        {title && <div className="px-3 py-2 text-xl">{title}</div>}
+        <div className="flex gap-2">
+          <button
+            className="ms-3 cursor-pointer w-5"
+            onClick={() => setIsOpened(!isOpened)}
+          >
+            <CloseIcon className="icon-hover hover:text-white" />
+          </button>
+          {title && <div className="px-3 py-2 text-xl font-bold">{title}</div>}
+        </div>
         <HoverScrollContainer>
-          <div className="dialog max-h-[80vh] ps-2 py-2">{children}</div>
+          <div className="dialog max-h-[90svh] ps-2 py-2">{children}</div>
         </HoverScrollContainer>
       </section>
     </dialog>

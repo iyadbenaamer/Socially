@@ -56,7 +56,7 @@ const Followers = () => {
     ) {
       setHasMore(false);
     }
-    const newCursor = newItems.slice(-1)[0]?._id;
+    const newCursor = newItems.slice(-1)[0]?.followId;
     if (newCursor && newCursor !== cursor) {
       setCursor(newCursor);
     }
