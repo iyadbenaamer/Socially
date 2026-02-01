@@ -5,13 +5,14 @@ import { setAuthStatus, setProfile, setResetPasswordInfo } from "state";
 
 import PasswordInput from "components/PasswordInput";
 import SubmitBtn from "components/SubmitBtn";
+import PasswordRules from "../signup/form/PasswordRules";
 
 import axiosClient from "utils/AxiosClient";
 import { Link } from "react-router-dom";
 
 const CreateNewPassword = () => {
   const { token, isPasswordReset } = useSelector(
-    (state) => state.resetPasswordInfo
+    (state) => state.resetPasswordInfo,
   );
   const [isValidInputs, setIsValidInputs] = useState({
     password: false,
@@ -52,7 +53,7 @@ const CreateNewPassword = () => {
             token: null,
             email: null,
             message: "Your reset link has expired. Please request a new one.",
-          })
+          }),
         );
       } else {
         dispatch(setResetPasswordInfo({ message }));
@@ -87,6 +88,7 @@ const CreateNewPassword = () => {
             fieldValue={data.password}
             placeholder={"New password"}
           />
+          <PasswordRules password={data.password} />
           <PasswordInput
             setIsValid={(isValid) =>
               setIsValidInputs({ ...isValidInputs, confirmPassword: isValid })

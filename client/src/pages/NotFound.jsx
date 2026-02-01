@@ -4,7 +4,7 @@ const NotFound = () => {
   return (
     <div
       className="container flex flex-col items-center p-3 text-2xl text-center justify-center"
-      style={{ height: "calc(100vh - 45px)" }}
+      style={{ height: "calc(100svh - 45px)" }}
     >
       <div className="w-full min-[425px]:w-[400px] sm:w-[500px] text-[transparent]">
         <NotFoundPicture />

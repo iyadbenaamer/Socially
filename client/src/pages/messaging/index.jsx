@@ -63,7 +63,7 @@ const Messaging = () => {
           <div
             className="fixed left-0 z-20 w-full"
             style={{
-              height: "calc(100vh - 95px)",
+              height: "calc(100svh - 95px)",
             }}
           >
             <Outlet />
@@ -80,15 +80,15 @@ const Messaging = () => {
               style={{
                 height:
                   windowWidth >= 1024
-                    ? "calc(100vh - 45px)"
-                    : "calc(100vh - 95px)",
+                    ? "calc(100svh - 45px)"
+                    : "calc(100svh - 95px)",
               }}
-              className="content messaging bg-200 col-span-12 lg:col-span-9 md:mx-0 grid grid-cols-3 h-[calc(100vh - 45px)] overflow-hidden"
+              className="content messaging bg-200 col-span-12 lg:col-span-9 md:mx-0 grid grid-cols-3 h-[calc(100svh - 45px)] overflow-hidden"
             >
               <div
                 className="col-span-3 md:col-span-1 md:col-start-1 flex flex-col "
                 style={{
-                  height: "calc(100vh - 45px)",
+                  height: "calc(100svh - 45px)",
                 }}
               >
                 <div className="contacts">
@@ -107,7 +107,7 @@ const Messaging = () => {
                     ))}
                   </div>
                 </div>
-                <div className="flex-1 min-h-0 overflow-y-scroll">
+                <div className="flex-1 min-h-0">
                   <Conversations />
                 </div>
               </div>

@@ -15,7 +15,6 @@ import convertToUnit from "utils/convertToUnit";
 
 import CommentIcon from "assets/icons/comments.svg?react";
 import HoverWrapper from "components/user-hover-card/HoverWrapper";
-import { useSelector } from "react-redux";
 
 export const CommentContext = createContext();
 
@@ -92,13 +91,20 @@ const Comment = (props) => {
                       id={id}
                     />
                   </div>
-                  <Media>
-                    <div className="rounded-xl overflow-hidden max-w-80">
+                  <Media file={file}>
+                    <div className="rounded-xl overflow-hidden max-w-80 max-h-[40vh] cursor-pointer">
                       {file && file.fileType === "photo" && (
-                        <img src={file.path} alt="" />
+                        <img
+                          src={file.path}
+                          alt=""
+                          className="max-h-[40vh] w-auto max-w-full object-contain pointer-events-none"
+                        />
                       )}
                       {file && file.fileType === "video" && (
-                        <video controls src={file.path} />
+                        <video
+                          src={file.path}
+                          className="max-h-[40vh] w-auto max-w-full object-contain pointer-events-none"
+                        />
                       )}
                     </div>
                   </Media>

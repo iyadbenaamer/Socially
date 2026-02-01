@@ -3,6 +3,7 @@ import { useMediaViewer } from "components/media-viewer/MediaViewerContext";
 import ToggleButtons from "./ToggleButtons";
 import VideoPlayer from "./VideoPlayer";
 import "./index.css";
+import { useWindowWidth } from "hooks/useWindowWidth";
 
 const Slider = (props) => {
   const { files } = props;
@@ -14,7 +15,7 @@ const Slider = (props) => {
 
   const file = files[currentSlide];
   const { openMediaViewer } = useMediaViewer() || {};
-
+  const windowWidth = useWindowWidth();
   // Set up loading state for all images on files change
   useEffect(() => {
     if (!files || files.length === 0) return;
@@ -107,7 +108,7 @@ const Slider = (props) => {
     <>
       <div
         ref={containerRef}
-        className="relative w-full sm:rounded-xl overflow-hidden mb-3 flex items-center justify-center"
+        className="relative w-full sm:rounded-xl overflow-hidden mb-1 flex items-center justify-center"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         role="group"
@@ -149,11 +150,13 @@ const Slider = (props) => {
             </div>
           )}
         </div>
-        <ToggleButtons
-          slidesCount={files?.length}
-          currentSlide={currentSlide}
-          setCurrentSlide={setCurrentSlide}
-        />
+        {windowWidth > 768 && (
+          <ToggleButtons
+            slidesCount={files?.length}
+            currentSlide={currentSlide}
+            setCurrentSlide={setCurrentSlide}
+          />
+        )}
         {/* Preload neighbor images (hidden) */}
         {files.map((f, i) => {
           if (f.fileType !== "photo") return null;
@@ -165,7 +168,7 @@ const Slider = (props) => {
       </div>
       {files?.length > 1 && (
         <div
-          className="bullets w-fit flex gap-1 my-0 mx-auto"
+          className="bullets w-fit flex gap-1 mt-1 mb-0 mx-auto"
           aria-label="Slide indicators"
         >
           {files.map((_, i) => (
@@ -173,7 +176,7 @@ const Slider = (props) => {
               key={i}
               type="button"
               onClick={() => setCurrentSlide(i)}
-              className={`bg-inverse w-[8px] aspect-square transition-opacity ${
+              className={`bg-inverse w-[5px] aspect-square transition-opacity ${
                 i !== currentSlide ? "opacity-30" : "opacity-100"
               } ${loadingStates[i] ? "animate-pulse" : ""}`}
               style={{ borderRadius: "50%" }}

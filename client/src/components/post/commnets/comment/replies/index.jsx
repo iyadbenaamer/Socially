@@ -21,8 +21,9 @@ const Replies = (props) => {
   } = props;
   const [searchParams] = useSearchParams();
   const post = useContext(PostContext);
-  const replyId = searchParams.get("replyId");
   const myProfile = useSelector((state) => state.profile);
+  const replyId = searchParams.get("replyId");
+  const dialog = searchParams.get("dialog");
 
   const [replies, setReplies] = useState([]);
   const [cursor, setCursor] = useState(0);
@@ -33,7 +34,7 @@ const Replies = (props) => {
     if (!showReplies) return;
     setLoading(true);
     const res = axiosClient(
-      `reply/page?postId=${post._id}&commentId=${commentId}&cursor=${cursor}`
+      `reply/page?postId=${post._id}&commentId=${commentId}&cursor=${cursor}`,
     );
     res
       .then((response) => {
@@ -57,7 +58,7 @@ const Replies = (props) => {
       const exists = replies.find((reply) => reply._id === replyId);
       if (!exists) {
         axiosClient(
-          `reply?postId=${post._id}&commentId=${commentId}&replyId=${replyId}`
+          `reply?postId=${post._id}&commentId=${commentId}&replyId=${replyId}`,
         )
           .then((response) => {
             if (response.status === 200) {
@@ -72,12 +73,11 @@ const Replies = (props) => {
   const focusedReply = useRef();
 
   useEffect(() => {
-    if (focusedReply.current && !isSearchReplyRendered) {
+    if (focusedReply.current && !isSearchReplyRendered && !dialog) {
       window.scrollTo({ top: focusedReply.current.offsetTop - 200 });
       setIsSearchReplyRendered(true);
     }
-  }, [replies]);
-
+  }, [replies, dialog]);
   useEffect(() => {
     if (isSearchReplyRendered) {
       focusedReply.current?.classList?.remove("focused");
@@ -93,7 +93,7 @@ const Replies = (props) => {
           <div
             key={reply._id}
             id={reply._id}
-            className={reply._id === replyId ? "focused" : null}
+            className={reply._id === replyId && !dialog ? "focused" : null}
             ref={reply._id === replyId ? focusedReply : null}
           >
             <Reply key={reply._id} reply={reply} />

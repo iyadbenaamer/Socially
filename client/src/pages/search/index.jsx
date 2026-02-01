@@ -172,8 +172,7 @@ const Search = () => {
 
   return (
     <Layout>
-      <h1 className="text-2xl py-4 sticky top-[45px] bg-100 z-30">Search</h1>
-      <div className="my-0 mx-auto">
+      <div className="my-0 mx-auto px-3">
         <div className="flex flex-col gap-4">
           <div className="relative" ref={searchBarRef}>
             <SearchBar
@@ -193,7 +192,7 @@ const Search = () => {
             {showSuggestions && suggestions.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute top-full left-0 right-0 mt-1 bg-300 rounded-lg shadow-lg z-50"
+                className="absolute top-full left-0 right-0 mt-1 bg-300 rounded-lg shadow-lg z-30"
                 role="listbox"
               >
                 {suggestions.map((suggestion, index) => (

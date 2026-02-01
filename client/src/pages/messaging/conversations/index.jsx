@@ -9,6 +9,7 @@ import axiosClient from "utils/AxiosClient";
 import { setConversations } from "state";
 
 import LoadingIcon from "assets/icons/loading-circle.svg?react";
+import HoverScrollContainer from "components/HoverScrollContainer";
 
 const Conversations = () => {
   const conversations = useSelector((state) => state.conversations);
@@ -82,32 +83,36 @@ const Conversations = () => {
   );
 
   return (
-    <ul
-      ref={container}
-      className="conversations flex flex-col overflow-y-scroll h-full py-4 px-2 gap-2 pb-36"
-    >
-      {isInitialLoading && (
-        <div className="w-8 self-center">
-          <LoadingIcon className="icon animate-spin" />
-        </div>
-      )}
+    <HoverScrollContainer>
+      <ul
+        ref={container}
+        className="conversations flex flex-col h-full py-4 px-2 gap-2 pb-36 overflow-y-auto"
+      >
+        {isInitialLoading && (
+          <div className="w-8 self-center">
+            <LoadingIcon className="icon animate-spin" />
+          </div>
+        )}
 
-      {conversations?.length === 0 && !isInitialLoading && (
-        <div className="mx-2">No conversations yet</div>
-      )}
+        {conversations?.length === 0 && !isInitialLoading && (
+          <div className="mx-2">No conversations yet</div>
+        )}
 
-      {conversations?.map((conversation) => (
-        <li key={conversation._id}>
-          <Conversation conversation={conversation} />
-        </li>
-      ))}
+        {conversations?.map((conversation) => (
+          <li key={conversation._id}>
+            <Conversation conversation={conversation} />
+          </li>
+        ))}
 
-      {!isFinished && conversations?.length >= 10 && (
-        <div ref={loadingRef} className="w-8 self-center">
-          <LoadingIcon className={`icon ${isLoading ? "animate-spin" : ""}`} />
-        </div>
-      )}
-    </ul>
+        {!isFinished && conversations?.length >= 10 && (
+          <div ref={loadingRef} className="w-8 self-center">
+            <LoadingIcon
+              className={`icon ${isLoading ? "animate-spin" : ""}`}
+            />
+          </div>
+        )}
+      </ul>
+    </HoverScrollContainer>
   );
 };
 

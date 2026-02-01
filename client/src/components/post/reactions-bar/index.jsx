@@ -9,7 +9,7 @@ const ReactionsBar = () => {
   const { _id: id, creatorId, likes, isLiked } = useContext(PostContext);
 
   return (
-    <div className="flex flex-col pt-1">
+    <div className="flex flex-col mt-1">
       <div className="grid grid-cols-3 items-center justify-items-center">
         <Like
           likes={likes}

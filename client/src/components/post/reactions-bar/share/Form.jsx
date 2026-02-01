@@ -50,7 +50,7 @@ const Form = (props) => {
       })
       .catch((err) => {
         dispatch(
-          setShowMessage({ message: err.response.data.message, type: "error" })
+          setShowMessage({ message: err.response.data.message, type: "error" }),
         );
       })
       .finally(() => {
@@ -69,7 +69,6 @@ const Form = (props) => {
   return (
     <div className="flex flex-col gap-3 w-[280px] sm:w-[500px] p-2">
       <textarea
-        autoFocus
         value={data.text}
         className="mt-2"
         dir="auto"

@@ -45,7 +45,13 @@ const Form = (props) => {
         formData.append("media", media[file]);
       }
     }
-    await axiosClient
+    dispatch(
+      setShowMessage({
+        message: "Posting...",
+        type: "info",
+      }),
+    );
+    axiosClient
       .post(`post/create`, formData)
       .then((response) => {
         if (posts) {
@@ -53,12 +59,6 @@ const Form = (props) => {
         } else {
           setPosts(response.data);
         }
-        dispatch(
-          setShowMessage({
-            message: "Post is published.",
-            type: "info",
-          }),
-        );
       })
       .catch((err) => {
         dispatch(
@@ -71,12 +71,19 @@ const Form = (props) => {
       .finally(() => {
         setData({ text: "", location: "" });
         setMedia([]);
-        setIsOpened(false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        dispatch(
+          setShowMessage({
+            message: "Post is published.",
+            type: "info",
+          }),
+        );
       });
+    setIsOpened(false);
   };
 
   return (
-    <div className="flex flex-col gap-2 w-[320px] sm:w-[560px] px-2 bg-[var(--bg-secondary)] rounded-2xl">
+    <div className="flex flex-col gap-2 sm:w-[560px] px-2 bg-[var(--bg-secondary)]">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Create a Post</h2>
       </div>
@@ -88,7 +95,6 @@ const Form = (props) => {
         <div className="relative">
           <textarea
             id="post-text"
-            autoFocus
             value={data.text}
             maxLength={MAX_TEXT}
             className="w-full h-40 overflow-auto resize-none rounded-xl border-solid  border px-4 py-3 focus:border-[var(--primary-color)] text-sm leading-relaxed"
@@ -132,7 +138,7 @@ const Form = (props) => {
       {/* Media Uploader */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between text-xs font-medium opacity-70">
-          <span>Media</span>
+          <span>Photos / Videos</span>
           <span className="opacity-60">
             {media.length} file{media.length !== 1 && "s"}
           </span>

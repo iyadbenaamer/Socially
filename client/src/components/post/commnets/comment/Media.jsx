@@ -1,17 +1,16 @@
-import Dialog from "components/dialog";
-import { useState } from "react";
+import { useMediaViewer } from "components/media-viewer/MediaViewerContext";
 
 const Media = (props) => {
-  const { children } = props;
-  const [isOpened, setIsOpened] = useState(false);
-  return (
-    <>
-      <div onClick={() => setIsOpened(true)}>{children}</div>
-      <Dialog isOpened={isOpened} setIsOpened={setIsOpened}>
-        {children}
-      </Dialog>
-    </>
-  );
+  const { children, file, files, startIndex = 0 } = props;
+  const { openMediaViewer } = useMediaViewer();
+
+  const handleOpen = () => {
+    const list = files || (file ? [file] : []);
+    if (!list.length) return;
+    openMediaViewer(list, startIndex);
+  };
+
+  return <div onClick={handleOpen}>{children}</div>;
 };
 
 export default Media;

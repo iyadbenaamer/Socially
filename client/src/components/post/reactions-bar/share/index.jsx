@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import Form from "./Form";
 import Dialog from "components/dialog";
@@ -13,7 +13,22 @@ const Share = () => {
 
   const [data, setData] = useState({ text: "", location: "" });
   const [media, setMedia] = useState([]);
-  const [isOpened, setIsOpened] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isOpened = searchParams.get("dialog") === "share";
+
+  const setShareDialog = (open, replace = true) =>
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (open) {
+          sp.set("dialog", "share");
+        } else {
+          sp.delete("dialog");
+        }
+        return sp;
+      },
+      { replace },
+    );
 
   return (
     <>
@@ -21,7 +36,7 @@ const Share = () => {
         className="flex w-auto justify-center gap-1 items-center hover:text-[var(--primary-color)] transition"
         onClick={() => {
           if (profile) {
-            setIsOpened(true);
+            setShareDialog(!isOpened, isOpened);
           } else {
             navigate("/login");
           }
@@ -31,9 +46,13 @@ const Share = () => {
           <ShareIcon />
         </div>
       </button>
-      <Dialog isOpened={isOpened} setIsOpened={setIsOpened}>
+      <Dialog
+        title="Share"
+        isOpened={isOpened}
+        setIsOpened={(next) => setShareDialog(next, true)}
+      >
         <Form
-          setIsOpened={setIsOpened}
+          setIsOpened={(next) => setShareDialog(next, true)}
           data={data}
           setData={setData}
           media={media}

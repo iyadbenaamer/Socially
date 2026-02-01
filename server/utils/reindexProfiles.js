@@ -108,7 +108,7 @@ const indexProfiles = async () => {
 // ================== INITIALIZER ==================
 export const initializeElasticsearch = async (reindex = false) => {
   try {
-    const { body: exists } = await client.indices.exists({ index: INDEX_NAME });
+    const exists = await client.indices.exists({ index: INDEX_NAME });
 
     if (exists && !reindex) {
       console.log("ℹ️ Elasticsearch index already exists");

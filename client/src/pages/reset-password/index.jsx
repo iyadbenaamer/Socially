@@ -12,7 +12,7 @@ import axiosClient from "utils/AxiosClient.js";
 
 const ResetPassword = () => {
   const { isCodeSent, token, message, email } = useSelector(
-    (state) => state.resetPasswordInfo
+    (state) => state.resetPasswordInfo,
   );
   const [alert, setAlert] = useState({ type: "error", isOpen: false });
   const setIsAlertOpen = (isOpen) => setAlert((prev) => ({ ...prev, isOpen }));
@@ -29,7 +29,7 @@ const ResetPassword = () => {
         message: "",
         isCodeSent: false,
         isPasswordReset: false,
-      })
+      }),
     );
   }, []);
 
@@ -49,7 +49,7 @@ const ResetPassword = () => {
               token,
               isCodeSent: false, // Don't set isCodeSent when using direct token
               message: "",
-            })
+            }),
           );
         })
         .catch((error) => {
@@ -59,7 +59,7 @@ const ResetPassword = () => {
               message,
               isCodeSent: false,
               token: null,
-            })
+            }),
           );
         });
     }
@@ -121,7 +121,7 @@ const ResetPassword = () => {
       <div
         className={`${
           theme === "light" ? "text-slate-800" : ""
-        } my-8 bg-300 rounded-xl p-4 shadow-md flex flex-col gap-2 self-center`}
+        } my-8 bg-300 rounded-xl p-4 shadow-md flex flex-col gap-2 max-w-xl w-full self-center`}
       >
         {renderComponent()}
       </div>

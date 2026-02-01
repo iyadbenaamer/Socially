@@ -27,15 +27,17 @@ import { MediaViewerProvider } from "components/media-viewer/MediaViewerContext"
 import useHandleSocket, { connectToSocketServer } from "hooks/useHandleSocket";
 import useUpdate from "hooks/useUpdate";
 import { setConversations } from "state";
+import { useWindowWidth } from "hooks/useWindowWidth";
+import Headroom from "react-headroom";
 
 const App = () => {
   //if user is stored in redux state, then the user is logged in
   const { isLoggedin, isVerified, email, token } = useSelector(
-    (state) => state.authStatus
+    (state) => state.authStatus,
   );
   const theme = useSelector((state) => state.settings.theme);
   const dispatch = useDispatch();
-
+  const windowWidth = useWindowWidth();
   /*
   this hook responsible for updating notifications and conversions
   and checking of authentication token once the app is loaded.
@@ -80,7 +82,12 @@ const App = () => {
         <DialogProvider>
           <MediaViewerProvider>
             <HoverCardProvider>
-              <Header />
+              {windowWidth >= 1024 && <Header />}
+              {windowWidth < 1024 && (
+                <Headroom>
+                  <Header />
+                </Headroom>
+              )}
               <motion.main
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}

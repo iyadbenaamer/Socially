@@ -36,7 +36,7 @@ const Posts = () => {
           setIsPostsFinished(true);
         }
         setPosts((prev) =>
-          prev ? [...prev, ...response.data] : [...response.data]
+          prev ? [...prev, ...response.data] : [...response.data],
         );
       })
       .catch(() => {
@@ -100,9 +100,8 @@ const Posts = () => {
 
   return (
     <PostsContext.Provider value={{ posts, setPosts }}>
+      <CreatePost />
       <div className="flex flex-col gap-y-4 items-center">
-        <CreatePost />
-
         {posts?.map((post) => (
           <Post key={post._id} post={post} />
         ))}

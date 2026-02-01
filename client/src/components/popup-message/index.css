@@ -27,6 +27,8 @@
   pointer-events: auto;
   backdrop-filter: blur(10px);
   border-left: 4px solid var(--info-accent, #3b82f6);
+  max-width: 90vw;
+
 }
 
 /* Info Message Header */
@@ -51,6 +53,7 @@
   line-height: 1.5;
   word-wrap: break-word;
   font-weight: 500;
+  width: fit-content;
 }
 
 /* Close Button */

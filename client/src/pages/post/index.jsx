@@ -5,6 +5,8 @@ import { Post as PostComponent } from "components/post";
 
 import axiosClient from "utils/AxiosClient";
 
+import BackBtn from "./BackBtn";
+
 const Post = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
@@ -26,8 +28,13 @@ const Post = () => {
   }, [postId]);
 
   return (
-    <div className="container lg:w-1/2 md:w-2/3 pt-5 pb-28">
-      {post && <PostComponent post={post} showComments />}
+    <div className="container lg:w-1/2 md:w-2/3 pb-28">
+      <BackBtn />
+      {post && (
+        <div className="lg:pt-12">
+          <PostComponent post={post} showComments />
+        </div>
+      )}
     </div>
   );
 };

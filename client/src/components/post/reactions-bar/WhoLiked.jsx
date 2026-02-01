@@ -25,7 +25,7 @@ const WhoLiked = (props) => {
           setCursor(
             response.data.length > 0
               ? response.data[response.data.length - 1].createdAt
-              : cursor
+              : cursor,
           );
         })
         .catch(() => setMessage("Failed to load likes."))
@@ -36,7 +36,6 @@ const WhoLiked = (props) => {
 
   return (
     <div className="w-[90vw] md:w-[600px] p-2 min-h-[50vh]">
-      <h1 className="pb-4 text-lg">Likes</h1>
       <ul className="flex flex-col gap-3">
         {loading && !message && <LoadingProfiles />}
         {likes?.map((profile) => (

@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import UserPicture from "components/UserPicture";
+import HoverScrollContainer from "components/HoverScrollContainer";
 import { PostContext } from ".";
 
 import axiosClient from "utils/AxiosClient";
@@ -18,7 +19,6 @@ const AddComment = (props) => {
     creatorId,
     setPost,
     setComments,
-    commentInput,
     setIsCommentsDisabled,
   } = useContext(PostContext);
   const profile = useSelector((state) => state.profile);
@@ -28,6 +28,19 @@ const AddComment = (props) => {
 
   const dispatch = useDispatch();
   const mediaBtn = useRef(null);
+  const textareaRef = useRef(null);
+
+  const resizeTextarea = (value) => {
+    const el = textareaRef.current;
+    if (!el) return;
+    // allow shrink
+    el.style.height = "auto";
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight || "20");
+    const maxHeight = lineHeight * 3; // max 3 lines
+    const scrollHeight = el.scrollHeight;
+    el.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+    el.style.overflowY = scrollHeight > maxHeight ? "auto" : "hidden";
+  };
 
   const addComment = () => {
     const formData = new FormData();
@@ -71,11 +84,6 @@ const AddComment = (props) => {
         }
       });
   };
-  useEffect(() => {
-    if (commentInput.current) {
-      commentInput.current.focus();
-    }
-  }, [commentInput]);
 
   const [file, setFile] = useState(null);
 
@@ -87,32 +95,42 @@ const AddComment = (props) => {
         </span>
         <div className="flex flex-col gap-2 w-full">
           <div className="flex items-center gap-2 bg-300 py-2 px-2 rounded-xl shadow-md">
-            <textarea
-              ref={commentInput}
-              onKeyDown={(e) => {
-                if (text) {
-                  if (e.key === "Enter" && !e.ctrlKey) {
-                    addComment();
-                    setMedia(null);
-                    setFile(null);
-                    setText("");
-                  } else if (e.key === "Enter") {
-                    e.target.value += "\n";
+            <HoverScrollContainer
+              height="auto"
+              className="w-4/5"
+              style={{ maxHeight: "4.5em" }}
+            >
+              <textarea
+                ref={textareaRef}
+                rows={1}
+                onKeyDown={(e) => {
+                  if (text) {
+                    if (e.key === "Enter" && !e.ctrlKey) {
+                      addComment();
+                      setMedia(null);
+                      setFile(null);
+                      setText("");
+                      setTimeout(() => resizeTextarea(""), 0);
+                    } else if (e.key === "Enter") {
+                      e.target.value += "\n";
+                    }
                   }
+                }}
+                value={text}
+                dir="auto"
+                className="comment-input w-full resize-none leading-5 overflow-y-auto"
+                placeholder={
+                  type === "reply" ? "Write a reply" : "Write a comment"
                 }
-              }}
-              value={text}
-              dir="auto"
-              className="comment-input h-6 w-4/5"
-              placeholder={
-                type === "reply" ? "Write a reply" : "Write a comment"
-              }
-              onChange={(e) => {
-                if (e.target.value.length <= 10000) {
-                  setText(e.target.value);
-                }
-              }}
-            ></textarea>
+                style={{ minHeight: "1.5em" }}
+                onChange={(e) => {
+                  if (e.target.value.length <= 10000) {
+                    setText(e.target.value);
+                    resizeTextarea(e.target.value);
+                  }
+                }}
+              ></textarea>
+            </HoverScrollContainer>
             <div className="flex justify-end w-1/5">
               <input
                 accept="video/*, video/x-m4v, video/webm, video/x-ms-wmv, video/x-msvideo, video/3gpp, video/flv, video/x-flv, video/mp4, video/quicktime, video/mpeg, video/ogv, .ts, .mkv, image/*, image/heic, image/heif"

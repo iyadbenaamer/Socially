@@ -34,8 +34,8 @@ const PostContent = () => {
           <OptionsBtn setIsModifying={setIsModifying} />
         </div>
       </div>
-      <div className="flex flex-col w-full py-4 sm:px-4">
-        <div className="py-3 px-2">
+      <div className="flex flex-col w-full sm:px-4">
+        <div className="p-2">
           <Text
             postCreatorId={creatorId}
             text={text}
@@ -45,7 +45,7 @@ const PostContent = () => {
             setIsModifying={setIsModifying}
           />
         </div>
-        <div className="self-end px-4 mb-2">
+        <div className="self-end px-2 mb-1">
           <Views />
         </div>
         {files?.length > 0 && <Slider files={files} />}

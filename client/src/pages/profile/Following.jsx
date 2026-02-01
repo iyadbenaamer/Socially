@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import Dialog from "components/dialog";
@@ -15,8 +15,23 @@ import convertToUnit from "utils/convertToUnit";
 
 const Following = () => {
   const { _id, followingCount } = useContext(ProfileContext);
-  const [showFollowing, setShowFollowing] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showFollowing = searchParams.get("dialog") === "following";
   const myProfile = useSelector((state) => state.profile);
+
+  const setFollowingDialog = (open, replace = true) =>
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (open) {
+          sp.set("dialog", "following");
+        } else {
+          sp.delete("dialog");
+        }
+        return sp;
+      },
+      { replace },
+    );
 
   const [following, setFollowing] = useState(null);
   const [count, setCount] = useState(followingCount);
@@ -29,7 +44,7 @@ const Following = () => {
     if (loading || !hasMore) return;
     setLoading(true);
     const result = await axiosClient(
-      `profile/following?id=${_id}&cursor=${cursor}`
+      `profile/following?id=${_id}&cursor=${cursor}`,
     )
       .then((response) => response.data)
       .catch(() => null);
@@ -52,9 +67,10 @@ const Following = () => {
   useEffect(() => {
     if (following?.length === 0) {
       setCount(0);
-      setShowFollowing(false);
+      // Close the dialog by removing the param
+      setFollowingDialog(false, true);
     }
-  }, [following]);
+  }, [following, setSearchParams]);
 
   useEffect(() => {
     if (!showFollowing) {
@@ -81,7 +97,7 @@ const Following = () => {
           }
         });
       },
-      { root: null, rootMargin: "200px", threshold: 0 }
+      { root: null, rootMargin: "200px", threshold: 0 },
     );
     observer.observe(loaderEl);
     return () => observer.disconnect();
@@ -92,14 +108,17 @@ const Following = () => {
       {count > 0 && (
         <div
           className="hover:text-[var(--primary-color)] hover:underline underline-offset-2 cursor-pointer"
-          onClick={() => setShowFollowing(true)}
+          onClick={() => setFollowingDialog(!showFollowing, showFollowing)}
         >
           Following {convertToUnit(count)}
         </div>
       )}
-      <Dialog isOpened={showFollowing} setIsOpened={setShowFollowing}>
-        <div className="px-2 flex flex-col gap-2 min-h-[50vh] w-[90vw] sm:w-[500px]">
-          <div className="text-xl py-2">Following</div>
+      <Dialog
+        title="Following"
+        isOpened={showFollowing}
+        setIsOpened={(next) => setFollowingDialog(next, true)}
+      >
+        <div className="px-2 flex flex-col gap-2 min-h-[100vh] w-[90vw] sm:w-[500px]">
           <ul className="flex flex-col gap-3">
             {following?.map((follow) => {
               const { _id: id, username, firstName, lastName } = follow;

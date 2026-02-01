@@ -26,6 +26,17 @@ const Text = (props) => {
   const dispatch = useDispatch();
   const textArea = useRef(null);
 
+  const resizeTextarea = () => {
+    const el = textArea.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight || "20");
+    const maxHeight = lineHeight * 5; // max 5 lines
+    const scrollHeight = el.scrollHeight;
+    el.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+    el.style.overflowY = scrollHeight > maxHeight ? "auto" : "hidden";
+  };
+
   const editText = async () => {
     let requestUrl;
     if (type === "post") {
@@ -40,7 +51,7 @@ const Text = (props) => {
       .patch(
         requestUrl,
         { text: modifiedText.trim() },
-        { headers: { Authorization: profile.token } }
+        { headers: { Authorization: profile.token } },
       )
       .then((response) => {
         setOriginalText(response.data.text);
@@ -52,14 +63,14 @@ const Text = (props) => {
               message:
                 err.response?.data?.message || "You cannot edit this text.",
               type: "error",
-            })
+            }),
           );
         } else {
           dispatch(
             setShowMessage({
               message: "An error occurred. Please try again later.",
               type: "error",
-            })
+            }),
           );
         }
       })
@@ -76,6 +87,11 @@ const Text = (props) => {
     } else {
       setText(text);
     }
+    if (isModifying) {
+      textArea.current.focus();
+      textArea.current.selectionStart = textArea.current.value.length;
+      resizeTextarea();
+    }
   }, [isModifying]);
 
   return (
@@ -83,10 +99,12 @@ const Text = (props) => {
       {isModifying ? (
         <>
           <textarea
-            autoFocus
             ref={textArea}
             dir="auto"
             value={modifiedText}
+            rows={1}
+            style={{ minHeight: "1.5em" }}
+            className="resize-none leading-5 overflow-y-auto"
             onChange={(e) => {
               const text = e.target.value;
               if (text.length <= 40000 && type == "post") {
@@ -94,6 +112,7 @@ const Text = (props) => {
               } else if (text.length <= 10000 && type !== "post") {
                 setModifiedText(text);
               }
+              resizeTextarea();
             }}
           ></textarea>
           <div className="self-end flex gap-3">

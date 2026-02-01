@@ -15,6 +15,7 @@ const Comments = () => {
 
   const commentId = searchParams.get("commentId");
   const replyId = searchParams.get("replyId");
+  const dialog = searchParams.get("dialog");
 
   const [cursor, setCursor] = useState(0);
   const [error, setError] = useState(false);
@@ -56,10 +57,10 @@ const Comments = () => {
   }, [comments]);
 
   useEffect(() => {
-    if (commentId && !replyId) {
+    if (commentId && !replyId && !dialog) {
       window.scrollTo({ top: focusedComment.current?.offsetTop - 200 });
     }
-  }, [focusedComment.current, commentId, replyId, comments]);
+  }, [focusedComment.current, commentId, replyId, comments, dialog]);
 
   return (
     <div className={`flex flex-col gap-5 w-full`}>
@@ -69,7 +70,9 @@ const Comments = () => {
             <div
               key={comment._id}
               className={
-                commentId === comment._id && !replyId ? "focused" : null
+                commentId === comment._id && !replyId && !dialog
+                  ? "focused"
+                  : null
               }
               ref={comment._id === commentId ? focusedComment : null}
               id={comment._id}

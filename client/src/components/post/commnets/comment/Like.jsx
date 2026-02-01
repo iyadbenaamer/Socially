@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Lottie from "react-lottie";
 
 import Dialog from "components/dialog";
@@ -23,8 +23,27 @@ const Like = (props) => {
   const [likesCount, setLikesCount] = useState(props.likesCount);
   const [isLiked, setIsliked] = useState(props.isLiked);
   const [firstLoad, setFirstLoad] = useState(true);
-  const [showLikes, setShowLikes] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showLikes =
+    searchParams.get("dialog") === "comment-likes" &&
+    searchParams.get("commentId") === commentId;
   const [isLoading, setIsLoading] = useState(false);
+
+  const setCommentLikesDialog = (open, replace = true) =>
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (open) {
+          sp.set("dialog", "comment-likes");
+          sp.set("commentId", commentId);
+        } else {
+          sp.delete("dialog");
+          sp.delete("commentId");
+        }
+        return sp;
+      },
+      { replace },
+    );
 
   const options = {
     loop: false,
@@ -107,7 +126,7 @@ const Like = (props) => {
           {likesCount > 0 ? (
             <button
               className="relative z-10 link"
-              onClick={() => setShowLikes(!showLikes)}
+              onClick={() => setCommentLikesDialog(!showLikes, showLikes)}
             >
               {convertToUnit(likesCount)}
             </button>
@@ -116,7 +135,11 @@ const Like = (props) => {
           )}
         </div>
       </div>
-      <Dialog isOpened={showLikes} setIsOpened={setShowLikes}>
+      <Dialog
+        title="Likes"
+        isOpened={showLikes}
+        setIsOpened={(next) => setCommentLikesDialog(next, true)}
+      >
         <WhoLiked id={commentId} type="comment" />
       </Dialog>
     </div>

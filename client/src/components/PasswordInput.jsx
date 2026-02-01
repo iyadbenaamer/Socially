@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
 import Lottie from "react-lottie";
 
 import ShowPasswordIcon from "assets/icons/eye.svg?react";
@@ -15,7 +14,6 @@ const PasswordInput = (props) => {
     /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}/g;
 
   const [inputType, setInputType] = useState("password");
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [focused, setFocused] = useState(false);
   const [changed, setChanged] = useState(false);
   const [check, setCheck] = useState({ state: "", message: "" });
@@ -37,7 +35,7 @@ const PasswordInput = (props) => {
       if (isValid) {
         setData((prev) => ({
           ...prev,
-          [name]: currentValue.trim(),
+          [name]: currentValue,
         }));
         if (input.current) input.current.style.border = "solid 2px green";
         setCheck({ state: "success" });
@@ -74,20 +72,6 @@ const PasswordInput = (props) => {
     [check],
   );
 
-  // Initialize validation when component mounts and fieldValue is available
-  useEffect(() => {
-    if (fieldValue && input.current) {
-      // Wait for the next tick to ensure the input value is properly set
-      const timer = setTimeout(() => {
-        if (input.current && input.current.value === fieldValue) {
-          verifyValue();
-        }
-      }, 10);
-
-      return () => clearTimeout(timer);
-    }
-  }, [fieldValue]); // Run when fieldValue changes (including initial load)
-
   useEffect(() => {
     // Only validate if we have a fieldValue and the input is not focused
     // This ensures validation runs when fieldValue is restored from session storage
@@ -120,24 +104,17 @@ const PasswordInput = (props) => {
             } p-[4px]`}
             type={inputType}
             name={name}
-            placeholder={placeholder}
             autoComplete="new-password"
-            readOnly={!focused}
             defaultValue={name === "password" ? data.password : ""}
             onFocus={(e) => {
-              // Remove readonly attribute when focused
-              e.target.removeAttribute("readonly");
               e.target.style.border = "solid 2px transparent";
-              if (name === "password") {
-                setShowPasswordForm(true);
-              }
               if (!changed) {
                 setChanged(true);
               }
               setFocused(true);
             }}
             onChange={(e) => {
-              const value = e.target.value.trim();
+              const value = e.target.value;
               setData((prev) => ({ ...prev, [name]: value }));
               window.sessionStorage.setItem([e.target.name], value);
               if (!focused && changed) {
@@ -145,11 +122,8 @@ const PasswordInput = (props) => {
               }
             }}
             onBlur={(e) => {
-              // Add readonly attribute back when blurred
-              e.target.setAttribute("readonly", true);
               verifyValue(e.target);
               setFocused(false);
-              setShowPasswordForm(false);
             }}
           />
           <button
@@ -165,20 +139,6 @@ const PasswordInput = (props) => {
               "text" && <HidePasswordIcon />
             )}
           </button>
-          {showPasswordForm && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.15 }}
-              className="absolute text-sm right-0 bottom-16 shadow-sm z-50 min-w-full bg-200 py-2 ps-2 rounded-xl"
-            >
-              <div>Length at least 8 letters</div>
-              <div>Contains at least 1 digit</div>
-              <div>Contains at least 1 special character</div>
-              <div>Contains at least 1 upper case letter</div>
-              <div>Contains at least 1 lower case letter</div>
-            </motion.div>
-          )}
         </div>
         <div className="w-10">
           {!focused && (

@@ -1,6 +1,6 @@
 const LoadingPost = () => {
   return (
-    <div className="w-full h-[200px] rounded-xl bg-200 px-3 pt-3 pb-6">
+    <div className="w-full h-[200px] md:rounded-xl bg-200 px-3 pt-3 pb-6">
       <div className="flex flex-col justify-between h-full">
         <div className="user-info w-fit flex gap-2">
           <div className="circle w-12 loading"></div>

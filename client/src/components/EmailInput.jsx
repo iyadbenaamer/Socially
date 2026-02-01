@@ -177,7 +177,7 @@ const EmailInput = (props) => {
       <div
         className={`${
           check.state === "fail" ? "text-[red]" : "text-[green]"
-        } h-7`}
+        } h-7 text-xs`}
       >
         {!focused && check.message}
       </div>

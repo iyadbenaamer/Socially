@@ -53,8 +53,9 @@ const useHandleSocket = () => {
     if (!socket) {
       return;
     }
+    const isLoaded = sessionStorage.getItem("isLoaded");
     const handleReconnect = () => {
-      if (wasDisconnectedRef.current) {
+      if (wasDisconnectedRef.current && isLoaded) {
         dispatch(
           setShowMessage({
             message: "Connection restored. You're back online.",
@@ -67,12 +68,14 @@ const useHandleSocket = () => {
     const handleDisconnect = () => {
       wasDisconnectedRef.current = true;
       try {
-        dispatch(
-          setShowMessage({
-            message: "Connection lost. Please check your internet connection.",
-            type: "error",
-          }),
-        );
+        if (isLoaded)
+          dispatch(
+            setShowMessage({
+              message:
+                "Connection lost. Please check your internet connection.",
+              type: "error",
+            }),
+          );
       } catch (error) {}
     };
 

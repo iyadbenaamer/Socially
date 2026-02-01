@@ -17,7 +17,7 @@ export const Post = (props) => {
   const { creatorId } = props.post;
   const [post, setPost] = useState(props.post);
   const [isCommentsDisabled, setIsCommentsDisabled] = useState(
-    props.post.isCommentsDisabled
+    props.post.isCommentsDisabled,
   );
   const [comments, setComments] = useState([]);
   const [showComments, setShowComments] = useState(props.showComments);
@@ -51,11 +51,11 @@ export const Post = (props) => {
       }}
     >
       <div
-        className={`w-full bg-200 sm:rounded-xl shadow-md ${
+        className={`w-full bg-200 md:rounded-xl shadow-md ${
           theme === "light" ? "border" : ""
         }`}
       >
-        <div className="flex flex-col bg-200 sm:rounded-xl w-full pt-4 pb-2">
+        <div className="flex flex-col bg-200 md:rounded-xl w-full pt-3 pb-1">
           <PostContent />
           {post.sharedPost && <SharedPost post={post.sharedPost} />}
           <ReactionsBar />

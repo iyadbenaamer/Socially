@@ -14,7 +14,6 @@ const Input = (props) => {
     setIsValid,
     placeholder,
   } = props;
-
   const regex =
     /.[^!|@|#|$|%|^|&|*|(|)|_|-|=|+|<|>|/|\\|'|"|:|;|[|]|\{|\}]{2,}/gi;
 
@@ -141,7 +140,7 @@ const Input = (props) => {
       <div
         className={`${
           check.state === "fail" ? "text-[red]" : "text-[green]"
-        } h-7`}
+        } h-7 text-xs`}
       >
         {!focused && check.message}
       </div>

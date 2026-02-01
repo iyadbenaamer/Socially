@@ -21,7 +21,7 @@ const Notifications = () => {
   const [isFetching, setIsFetching] = useState(false);
 
   const unreadNotificationsCount = useSelector(
-    (state) => state.unreadNotificationsCount
+    (state) => state.unreadNotificationsCount,
   );
   const isAllRead = () => {
     for (let i = 0; i < notifications?.length; i++) {
@@ -65,7 +65,7 @@ it changes in /notifications route
   useEffect(() => {
     const updatePage = () => {
       const notificationsEndLocation = Math.floor(
-        loading.current?.offsetTop - window.innerHeight
+        loading.current?.offsetTop - window.innerHeight,
       );
       const scroll = Math.floor(window.scrollY);
       if (scroll >= notificationsEndLocation) {
@@ -113,8 +113,7 @@ it changes in /notifications route
 
   return (
     <Layout>
-      <div className="flex justify-between items-center py-4 sticky top-[45px] bg-100 z-30">
-        <h1 className="text-2xl">Notifications</h1>
+      <div className="flex justify-between items-center py-4 px-3 sticky top-0 bg-100 z-30">
         <div className="flex gap-5">
           {!isAllRead() && (
             <div

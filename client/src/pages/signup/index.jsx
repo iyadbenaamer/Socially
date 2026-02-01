@@ -17,13 +17,13 @@ const Signup = () => {
   if (isSignedup) navigate("/verify-account");
 
   return (
-    <div className="container py-5 m-auto">
+    <div className="container p-4 m-auto">
       <div
-        className={`auth flex flex-col gap-3 w-fit mx-auto shadow-md rounded-xl p-4 bg-300 ${
+        className={`auth flex flex-col gap-3 p-4 max-w-3xl mx-auto shadow-md rounded-xl bg-300 ${
           theme === "light" ? "border" : ""
         }`}
       >
-        <h2 className="text-2xl">Sign up</h2>
+        <h2 className="text-2xl font-bold">Sign up</h2>
         <Form setIsSignup={setIsSignedup} />
         <div>
           Already have an account?{" "}

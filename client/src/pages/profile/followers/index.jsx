@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import Dialog from "components/dialog";
 import UserPicture from "components/UserPicture";
@@ -17,7 +17,8 @@ import { useSelector } from "react-redux";
 const Followers = () => {
   const { followersCount, _id } = useContext(ProfileContext);
   const myProfile = useSelector((state) => state.profile);
-  const [showFollowers, setShowFollowers] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showFollowers = searchParams.get("dialog") === "followers";
   const [followers, setFollowers] = useState(null);
   const [count, setCount] = useState(followersCount);
   const [cursor, setCursor] = useState("000000000000000000000000");
@@ -25,11 +26,25 @@ const Followers = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loaderEl, setLoaderEl] = useState(null);
 
+  const setFollowersDialog = (open, replace = true) =>
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (open) {
+          sp.set("dialog", "followers");
+        } else {
+          sp.delete("dialog");
+        }
+        return sp;
+      },
+      { replace },
+    );
+
   const fetchProfiles = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     const result = await axiosClient(
-      `profile/followers?id=${_id}&cursor=${cursor}`
+      `profile/followers?id=${_id}&cursor=${cursor}`,
     )
       .then((response) => response.data)
       .catch(() => null);
@@ -51,9 +66,9 @@ const Followers = () => {
   useEffect(() => {
     if (followers?.length === 0) {
       setCount(0);
-      setShowFollowers(false);
+      setFollowersDialog(false, true);
     }
-  }, [followers]);
+  }, [followers, setSearchParams]);
 
   useEffect(() => {
     if (!showFollowers) {
@@ -79,7 +94,7 @@ const Followers = () => {
           }
         });
       },
-      { root: null, rootMargin: "200px", threshold: 0 }
+      { root: null, rootMargin: "200px", threshold: 0 },
     );
     observer.observe(loaderEl);
     return () => observer.disconnect();
@@ -90,14 +105,17 @@ const Followers = () => {
       {count > 0 && (
         <div
           className="hover:text-[var(--primary-color)] hover:underline underline-offset-2 cursor-pointer"
-          onClick={() => setShowFollowers(true)}
+          onClick={() => setFollowersDialog(!showFollowers, showFollowers)}
         >
           Followers {convertToUnit(count)}
         </div>
       )}
-      <Dialog isOpened={showFollowers} setIsOpened={setShowFollowers}>
+      <Dialog
+        title="Followers"
+        isOpened={showFollowers}
+        setIsOpened={(next) => setFollowersDialog(next, true)}
+      >
         <div className="px-4 flex flex-col gap-2 min-h-[50vh] w-[90vw] sm:w-[500px]">
-          <div className="text-xl">Followers</div>
           <ul className="flex flex-col gap-5">
             {followers?.map((profile) => {
               const { _id: id, username, firstName, lastName } = profile;

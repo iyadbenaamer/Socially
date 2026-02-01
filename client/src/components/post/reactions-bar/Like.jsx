@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Lottie from "react-lottie";
 
 import WhoLiked from "./WhoLiked";
@@ -27,8 +27,26 @@ const Like = () => {
   const [likesCount, setLikesCount] = useState(postContext.likesCount);
   const [isLiked, setIsliked] = useState(postContext.isLiked);
   const [firstLoad, setFirstLoad] = useState(true);
-  const [showLikes, setShowLikes] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showLikes =
+    searchParams.get("dialog") === "post-likes" &&
+    searchParams.get("postId") === postId;
   const [isLoading, setIsLoading] = useState(false);
+  const setLikesDialog = (open, replace = false) =>
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (open) {
+          sp.set("dialog", "post-likes");
+          sp.set("postId", postId);
+        } else {
+          sp.delete("dialog");
+          sp.delete("postId");
+        }
+        return sp;
+      },
+      { replace },
+    );
 
   const options = {
     loop: false,
@@ -84,7 +102,6 @@ const Like = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <>
       <div className="flex justify-center gap-2 items-center transition ">
@@ -110,7 +127,9 @@ const Like = () => {
         {likesCount > 0 ? (
           <button
             className="relative link"
-            onClick={() => setShowLikes(!showLikes)}
+            onClick={() => {
+              setLikesDialog(!showLikes, showLikes);
+            }}
           >
             {convertToUnit(likesCount)}
           </button>
@@ -118,7 +137,13 @@ const Like = () => {
           <>0</>
         )}
       </div>
-      <Dialog isOpened={showLikes} setIsOpened={setShowLikes}>
+      <Dialog
+        title="Likes"
+        isOpened={showLikes}
+        setIsOpened={(next) => {
+          setLikesDialog(next, !next);
+        }}
+      >
         <WhoLiked type="post" id={postId} />
       </Dialog>
     </>

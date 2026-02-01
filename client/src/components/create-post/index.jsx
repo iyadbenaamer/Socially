@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 import Dialog from "components/dialog";
 import Form from "./form";
@@ -10,8 +10,23 @@ import AddIcon from "assets/icons/edit.svg?react";
 const CreatePost = () => {
   const profile = useSelector((state) => state.profile);
 
-  const [isOpened, setIsOpened] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isOpened = searchParams.get("dialog") === "create-post";
   const [data, setData] = useState({ text: "", location: "" });
+
+  const setCreatePostDialog = (open, replace = true) =>
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (open) {
+          sp.set("dialog", "create-post");
+        } else {
+          sp.delete("dialog");
+        }
+        return sp;
+      },
+      { replace },
+    );
 
   const { username: usernameParam } = useParams();
 
@@ -21,21 +36,26 @@ const CreatePost = () => {
   if (usernameParam && profile?.username !== usernameParam) return;
 
   return (
-    <div>
+    <>
       <button
-        onClick={() => setIsOpened(true)}
-        className="create-post bg-primary p-2 rounded-3xl shadow-md z-[1000] fixed right-3 sm:right-16 bottom-20 sm:bottom-16 w-12 sm:w-14"
+        onClick={() => setCreatePostDialog(!isOpened, isOpened)}
+        className="create-post bg-primary p-2 rounded-3xl shadow-md z-[1000] fixed right-3 sm:right-16 bottom-14 sm:bottom-14 w-12 sm:w-14"
       >
         <AddIcon className="text-white" />
       </button>
       <Dialog
+        title="Create Post"
         isOpened={isOpened}
-        setIsOpened={setIsOpened}
+        setIsOpened={(next) => setCreatePostDialog(next, true)}
         preventClickOutside={true}
       >
-        <Form setIsOpened={setIsOpened} data={data} setData={setData} />
+        <Form
+          setIsOpened={(next) => setCreatePostDialog(next, true)}
+          data={data}
+          setData={setData}
+        />
       </Dialog>
-    </div>
+    </>
   );
 };
 
