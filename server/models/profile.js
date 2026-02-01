@@ -15,7 +15,6 @@ const ProfileSchema = new Schema({
   },
   lastName: {
     type: String,
-    required: true,
     min: 2,
     max: 20,
   },

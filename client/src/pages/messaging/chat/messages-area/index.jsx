@@ -43,7 +43,7 @@ const MessagesArea = (props) => {
 
   // Reset pagination state when conversation changes
   useEffect(() => {
-    setPage(2);
+    setPage(1);
     setIsMessagesFinished(false);
     setIsLoading(false);
 

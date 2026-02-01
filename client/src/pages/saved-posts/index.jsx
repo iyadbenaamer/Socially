@@ -24,7 +24,9 @@ const SavedPosts = () => {
   return (
     <Layout>
       <div className="lg:w-4/5 center">
-        {posts?.length === 0 && !isFetching && <>No posts.</>}
+        {posts?.length === 0 && !isFetching && (
+          <div className="p-3">No posts.</div>
+        )}
         {isFetching && <LoadingPost />}
         <div className="flex flex-col gap-3 justify-center">
           {posts?.map((post) => (

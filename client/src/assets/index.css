@@ -503,6 +503,7 @@ svg.icon-hover:hover {
 
 /* Headroom base */
 .headroom {
+  z-index: 40 !important;
   transition: transform 0.25s ease;
 }
 

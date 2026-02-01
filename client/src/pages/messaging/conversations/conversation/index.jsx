@@ -16,18 +16,18 @@ const Conversation = ({ conversation }) => {
   const theme = useSelector((state) => state.settings.theme);
 
   const participantId = conversation.participants?.find(
-    (participant) => participant._id !== myProfile._id
+    (participant) => participant?._id !== myProfile._id,
   )._id;
   const participant = contacts.find((contact) => contact._id === participantId);
   const { unreadMessagesCount } = conversation;
   const lastMessage = conversation.messages[0];
   const isOnline = useSelector((state) => state.contacts).find(
-    (contact) => contact._id === participantId
+    (contact) => contact._id === participantId,
   )?.isOnline;
 
-  if (!participant) {
-    return null;
-  }
+  // if (!participant) {
+  //   return null;
+  // }
 
   return (
     <ConversationContext.Provider value={{ participant }}>
@@ -54,7 +54,7 @@ const Conversation = ({ conversation }) => {
                   unreadMessagesCount > 0 ? "font-semibold" : "font-medium"
                 } text-sm sm:text-base`}
               >
-                {participant.firstName} {participant.lastName}
+                {participant?.firstName} {participant?.lastName}
               </div>
               {unreadMessagesCount > 0 && (
                 <div className="flex-shrink-0 w-5 h-5 bg-primary text-white text-xs circle flex items-center justify-center font-medium">

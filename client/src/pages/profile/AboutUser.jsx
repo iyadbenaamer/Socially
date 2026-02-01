@@ -22,10 +22,10 @@ const AboutUser = () => {
       {/* contains name and username */}
       <div>
         <div className="name text-2xl">
-          {(!firstName || !lastName) && (
+          {!firstName && !lastName && (
             <div className="rounded-xl h-4 w-36 loading"></div>
           )}
-          {firstName && lastName && (
+          {(firstName || lastName) && (
             <>
               {firstName} {lastName}
             </>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const UserPicture = ({ profile, isOnline }) => {
+  if (!profile) return null;
   const { _id: id, firstName, lastName, profilePicPath } = profile;
 
   const myProfile = useSelector((state) => state.profile);

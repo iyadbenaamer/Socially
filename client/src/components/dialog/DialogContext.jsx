@@ -9,7 +9,7 @@ export const DialogProvider = ({ children }) => {
   const [dialogContent, setDialogContent] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const dialogParam = searchParams.get("dialog");
+  const dialogParam = searchParams.get("dialog") === "custom";
 
   const openDialog = (content) => {
     setDialogContent(() => content);
@@ -43,6 +43,7 @@ export const DialogProvider = ({ children }) => {
       closeDialog();
     }
   }, [dialogContent, dialogParam]);
+
   return (
     <DialogContext.Provider value={{ openDialog, closeDialog }}>
       {children}

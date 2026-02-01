@@ -60,11 +60,11 @@ const Dialog = (props) => {
   return (
     <dialog
       aria-busy={true}
-      className=" text-inherit w-full fixed top-0 bg-[#00000063] h-[100vh] flex items-center justify-center z-[1150]"
+      className=" text-inherit w-full fixed top-0 bg-[#00000063] h-[100svh] flex items-center justify-center z-[1150]"
     >
       <section
         ref={prompt}
-        className="dialog py-2 bg-200 max-h-[100vh] w-[calc(100vw-8px)] rounded-xl md:h-auto md:w-auto"
+        className="dialog py-2 bg-200 max-h-[100svh] w-[calc(100vw-8px)] rounded-xl md:h-auto md:w-auto"
       >
         <button
           className="ms-3 cursor-pointer w-5"
