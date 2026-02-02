@@ -1,9 +1,9 @@
 import BackIcon from "assets/icons/arrow-left.svg?react";
 import { useNavigate } from "react-router-dom";
-
+// TODO
 const BackBtn = () => {
   const navigate = useNavigate();
-
+  console.log();
   return (
     <>
       <div className="hidden lg:flex justify-center fixed left-0 top-[45px] py-2 bg-100 z-[100] w-[100vw]">
@@ -23,7 +23,13 @@ const BackBtn = () => {
       <div className="flex lg:hidden py-2 bg-100 z-[100]">
         <div className="lg:w-1/2 md:w-2/3">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate("/", { replace: true });
+              }
+            }}
             className="flex items-center text-hovered"
             aria-label="Go back"
           >

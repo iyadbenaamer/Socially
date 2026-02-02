@@ -65,13 +65,12 @@ export const create = async (req, res) => {
 };
 
 export const share = async (req, res) => {
-  const uploadsFolder = `${process.env.API_URL}/storage/`;
   try {
     const { user } = req;
     let { postId } = req.query;
     let { text, location } = req.body;
+    const { filesInfo } = req;
     text = text.trim();
-    const { media } = req.files;
 
     const profile = await Profile.findById(user.id);
     const sharedPost = await Post.findById(postId);
@@ -82,24 +81,7 @@ export const share = async (req, res) => {
 
     const sharedPostProfile = await Profile.findById(sharedPost.creatorId);
 
-    let filesInfo = [];
-    if (media) {
-      media.map((file) => {
-        if (file.mimetype.startsWith("image")) {
-          filesInfo.push({
-            path: `${uploadsFolder}${file.filename}`,
-            fileType: "photo",
-          });
-        } else if (file.mimetype.startsWith("video")) {
-          filesInfo.push({
-            path: `${uploadsFolder}${file.filename}`,
-            fileType: "video",
-          });
-        }
-      });
-    }
-
-    if (!text && filesInfo.length === 0) {
+    if (!text && (!filesInfo || filesInfo.length === 0)) {
       return res.status(400).json({ message: "Post cannot be empty." });
     }
     if (text.length > 40000) {
@@ -125,8 +107,9 @@ export const share = async (req, res) => {
         const post = await Post.create({
           creatorId: user.id,
           text,
+          files: filesInfo,
           createdAt: Date.now(),
-          location: location.trim(),
+          location: location?.trim(),
           sharedPost: {
             _id: sharedPost._id,
             creatorId: sharedPost.creatorId,
@@ -168,8 +151,9 @@ export const share = async (req, res) => {
     const post = await Post.create({
       creatorId: user.id,
       text,
+      files: filesInfo,
       createdAt: Date.now(),
-      location: location.trim(),
+      location: location?.trim(),
       sharedPost: {
         _id: sharedPost._id,
         creatorId: sharedPost.creatorId,

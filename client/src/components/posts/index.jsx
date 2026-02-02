@@ -112,7 +112,9 @@ const Posts = () => {
           </div>
         )}
 
-        {posts?.length === 0 && <>No posts</>}
+        {posts?.length === 0 && (
+          <div className="p-3 text-xl font-bold">No posts</div>
+        )}
 
         {message && !isPostsFinished && (
           <NoConnectionMessage

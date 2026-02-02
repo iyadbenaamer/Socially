@@ -1,11 +1,5 @@
 import { useEffect } from "react";
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 
@@ -106,7 +100,7 @@ const App = () => {
                       isLoggedin && isVerified ? (
                         <Home />
                       ) : (
-                        <Navigate to={"/login"} replace={true} />
+                        <Navigate to="/login" replace={true} />
                       )
                     }
                   />
@@ -118,18 +112,14 @@ const App = () => {
                       ) : isLoggedin && !isVerified ? (
                         <Navigate to="/verify-account" />
                       ) : (
-                        <Navigate to="/" replace={true} />
+                        <Navigate to="/" replace />
                       )
                     }
                   />
                   <Route
                     path="/signup"
                     element={
-                      !isLoggedin ? (
-                        <Signup />
-                      ) : (
-                        <Navigate to="/" replace={true} />
-                      )
+                      !isLoggedin ? <Signup /> : <Navigate to="/" replace />
                     }
                   />
                   <Route
@@ -138,7 +128,7 @@ const App = () => {
                       isLoggedin && !isVerified ? (
                         <VerifyAccount />
                       ) : isLoggedin && (email || token) && isVerified ? (
-                        <Navigate to="/welcome" replace={true} />
+                        <Navigate to="/welcome" replace />
                       ) : (
                         <Navigate to="/" />
                       )
@@ -150,7 +140,7 @@ const App = () => {
                       !isLoggedin || (isLoggedin && !isVerified) ? (
                         <VerifyAccountByLink />
                       ) : isLoggedin && (email || token) && isVerified ? (
-                        <Navigate to="/welcome" replace={true} />
+                        <Navigate to="/welcome" replace />
                       ) : (
                         <Navigate to="/" />
                       )
@@ -162,7 +152,7 @@ const App = () => {
                       !isLoggedin ? (
                         <ResetPassword />
                       ) : (
-                        <Navigate to={"/"} replace={true} />
+                        <Navigate to={"/"} replace />
                       )
                     }
                   />
@@ -172,7 +162,7 @@ const App = () => {
                       !isLoggedin ? (
                         <ResetPassword />
                       ) : (
-                        <Navigate to={"/"} replace={true} />
+                        <Navigate to={"/"} replace />
                       )
                     }
                   />
@@ -182,9 +172,9 @@ const App = () => {
                       isLoggedin && isVerified && email ? (
                         <Welcome />
                       ) : isLoggedin && !isVerified && email ? (
-                        <Navigate to="/verify-account" replace={true} />
+                        <Navigate to="/verify-account" replace />
                       ) : (
-                        <Navigate to="/" replace={true} />
+                        <Navigate to="/" replace />
                       )
                     }
                   />
@@ -195,7 +185,7 @@ const App = () => {
                       isLoggedin && isVerified ? (
                         <Notifications />
                       ) : (
-                        <Navigate to="/" replace={true} />
+                        <Navigate to="/" replace />
                       )
                     }
                   />
@@ -205,7 +195,7 @@ const App = () => {
                       isLoggedin && isVerified ? (
                         <Messaging />
                       ) : (
-                        <Navigate to="/" replace={true} />
+                        <Navigate to="/" replace />
                       )
                     }
                   >
@@ -221,7 +211,7 @@ const App = () => {
                       isLoggedin && isVerified ? (
                         <SavedPosts />
                       ) : (
-                        <Navigate to="/" replace={true} />
+                        <Navigate to="/" replace />
                       )
                     }
                   />

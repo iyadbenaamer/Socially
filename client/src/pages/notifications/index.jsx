@@ -133,7 +133,9 @@ it changes in /notifications route
           )}
         </div>
       </div>
-      {notifications?.length === 0 && !isFetching && <>No notifications</>}
+      {notifications?.length === 0 && !isFetching && (
+        <div className="p-3 text-xl font-bold">No notifications</div>
+      )}
       {isFetching && notifications?.length === 0 && <LoadingProfiles />}
       <ul ref={container} className="flex flex-col gap-2 pt-4">
         {notifications.map((notification) => (

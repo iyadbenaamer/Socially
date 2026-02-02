@@ -333,7 +333,7 @@ export const getFeedPosts = async (req, res) => {
 
     // Prepare aggregation pipelines
     const followingIds = await Follow.find({ followerId: user._id }).distinct(
-      "followedId"
+      "followedId",
     );
 
     const followedPipeLines = getGeneralPipelines(user._id, {
@@ -343,6 +343,7 @@ export const getFeedPosts = async (req, res) => {
 
     const favoritePipeLines = getGeneralPipelines(user._id, {
       keywords: { $in: [...user.favoriteTopics.keys()] },
+      creatorId: { $ne: user._id },
       $expr: { $eq: [{ $size: "$userViewsArr" }, 0] },
     });
 
@@ -372,7 +373,7 @@ export const getFeedPosts = async (req, res) => {
           const sharedPost = await Post.findById(post.sharedPost._id);
           if (sharedPost) {
             const sharedPostProfile = await Profile.findById(
-              sharedPost.creatorId
+              sharedPost.creatorId,
             );
             post.sharedPost = {
               ...sharedPost.toObject(),
@@ -383,7 +384,7 @@ export const getFeedPosts = async (req, res) => {
           }
           return post;
         }
-      })
+      }),
     );
     return res.json(shuffledPosts);
   } catch (err) {

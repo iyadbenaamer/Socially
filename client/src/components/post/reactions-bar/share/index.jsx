@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -6,15 +6,19 @@ import Form from "./Form";
 import Dialog from "components/dialog";
 
 import ShareIcon from "assets/icons/share.svg?react";
+import { PostContext } from "components/post";
 
 const Share = () => {
   const navigate = useNavigate();
   const profile = useSelector((state) => state.profile);
+  const post = useContext(PostContext);
 
   const [data, setData] = useState({ text: "", location: "" });
   const [media, setMedia] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const isOpened = searchParams.get("dialog") === "share";
+  const isOpened =
+    searchParams.get("dialog") === "share" &&
+    searchParams.get("postId") === post._id;
 
   const setShareDialog = (open, replace = true) =>
     setSearchParams(
@@ -22,8 +26,10 @@ const Share = () => {
         const sp = new URLSearchParams(prev);
         if (open) {
           sp.set("dialog", "share");
+          sp.set("postId", post._id);
         } else {
           sp.delete("dialog");
+          sp.delete("postId");
         }
         return sp;
       },
@@ -48,6 +54,7 @@ const Share = () => {
       </button>
       <Dialog
         title="Share"
+        preventClickOutside
         isOpened={isOpened}
         setIsOpened={(next) => setShareDialog(next, true)}
       >

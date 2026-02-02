@@ -28,6 +28,7 @@ export const newConversationByFollow = async (req, res, next) => {
     });
 
     if (conversation) {
+      console.log(conversation);
       return next();
     }
 
@@ -53,16 +54,16 @@ export const newConversationByFollow = async (req, res, next) => {
 
     conversation.participants.map(async (participant) => {
       const otherParticipant = conversation.participants.find(
-        (par) => par.id !== participant.id
+        (par) => par.id !== participant.id,
       );
       const socketIdsList = getOnlineUsers().get(participant.id);
       const otherParticipantSocketIdsList = getOnlineUsers().get(
-        otherParticipant.id
+        otherParticipant.id,
       );
 
       if (socketIdsList) {
         const otherParticipantProfile = await Profile.findById(
-          otherParticipant.id
+          otherParticipant.id,
         );
         /*
         if the user is online send a the new conversation 
@@ -133,15 +134,15 @@ export const newConversationByMessaging = async (req, res, next) => {
 
     conversation.participants.map(async (participant) => {
       const otherParticipant = conversation.participants.find(
-        (par) => par.id !== participant.id
+        (par) => par.id !== participant.id,
       );
       const socketIdsList = getOnlineUsers().get(participant.id);
       const otherParticipantSocketIdsList = getOnlineUsers().get(
-        otherParticipant.id
+        otherParticipant.id,
       );
       if (socketIdsList) {
         const otherParticipantProfile = await Profile.findById(
-          otherParticipant.id
+          otherParticipant.id,
         );
         /*
         if the user is online send a the new conversation 
