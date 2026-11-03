@@ -1,5 +1,8 @@
 import { Schema, model, Types } from "mongoose";
-import { client } from "../services/elasticsearch.js";
+import {
+  client,
+  isElasticsearchEnabled,
+} from "../services/elasticsearch.js";
 
 const { ObjectId } = Types;
 
@@ -45,6 +48,8 @@ const ProfileSchema = new Schema({
 
 // indexing the profile in elasticsearch
 ProfileSchema.post("save", async function (doc) {
+  if (!isElasticsearchEnabled) return;
+
   try {
     await client.index({
       index: "profiles",

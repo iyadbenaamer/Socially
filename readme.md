@@ -74,9 +74,11 @@ Follow these steps to set up the project:
      PORT=5000
      TOKEN_EXPIRATION=10d
      PEXELS_API_KEY=<your Pexels API key>
+     ELASTICSEARCH_ENABLED=false
      ```
 
    > **Note:** To get a Pexels API key, visit [Pexels API](https://www.pexels.com/api/) and sign up for a free account. The API key is used for generating contextual images in the seed script.
+   > Set `ELASTICSEARCH_ENABLED=false` in the server `.env` to disable Elasticsearch search and profile indexing. It defaults to enabled.
 
 3. **Install dependencies:**
 
@@ -140,7 +142,7 @@ The script will create sample users, posts, and relationships. It uses the Pexel
     ```
 
     Notes:
-    - The script reads Elasticsearch configuration from environment variables (`ELASTIC_PROTOCOL`, `ELASTIC_HOST`, `ELASTIC_PORT`, `ELASTIC_USERNAME`, `ELASTIC_PASSWORD`, `ELASTICSEARCH_CA_PATH`).
+    - The script reads Elasticsearch configuration from environment variables (`ELASTICSEARCH_ENABLED`, `ELASTIC_PROTOCOL`, `ELASTIC_HOST`, `ELASTIC_PORT`, `ELASTIC_USERNAME`, `ELASTIC_PASSWORD`, `ELASTICSEARCH_CA_PATH`).
     - You can supply a local `MONGO_URI` via `/server/.env` or rely on the default `mongodb://127.0.0.1:27017/socially` for local testing.
     - Use `ELASTIC_PROTOCOL=https` and set `ELASTICSEARCH_CA_PATH` when connecting to a secured Elasticsearch cluster.
 

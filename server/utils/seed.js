@@ -6,7 +6,10 @@ import Profile from "../models/profile.js";
 import Post from "../models/post.js";
 import Follow from "../models/follow.js";
 
-import { client } from "../services/elasticsearch.js";
+import {
+  client,
+  isElasticsearchEnabled,
+} from "../services/elasticsearch.js";
 
 // Configuration (defaults can be overridden via CLI flags)
 let TOTAL_USERS = 10; // Reduce to 10 for testing, increase for production seed
@@ -1236,31 +1239,32 @@ async function getContextualImageUrl(imageTypes, context) {
 // Main seeding function
 async function seedDatabase() {
   try {
-    // Create Elasticsearch index once at the beginning
-    try {
-      await client.indices.create({
-        index: "profiles",
-        body: {
-          mappings: {
-            properties: {
-              username: { type: "keyword" },
-              firstName: { type: "text" },
-              lastName: { type: "text" },
-              suggest: {
-                type: "completion",
+    if (isElasticsearchEnabled) {
+      try {
+        await client.indices.create({
+          index: "profiles",
+          body: {
+            mappings: {
+              properties: {
+                username: { type: "keyword" },
+                firstName: { type: "text" },
+                lastName: { type: "text" },
+                suggest: {
+                  type: "completion",
+                },
               },
             },
           },
-        },
-      });
-      console.log("Elasticsearch index 'profiles' created successfully");
-    } catch (error) {
-      if (error.message.includes("resource_already_exists_exception")) {
-        console.log(
-          "Elasticsearch index 'profiles' already exists, skipping creation",
-        );
-      } else {
-        throw error;
+        });
+        console.log("Elasticsearch index 'profiles' created successfully");
+      } catch (error) {
+        if (error.message.includes("resource_already_exists_exception")) {
+          console.log(
+            "Elasticsearch index 'profiles' already exists, skipping creation",
+          );
+        } else {
+          throw error;
+        }
       }
     }
 

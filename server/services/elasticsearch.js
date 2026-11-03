@@ -3,6 +3,13 @@ import fs from "fs";
 import { config } from "dotenv";
 
 config();
+export const isElasticsearchEnabled =
+  process.env.ELASTICSEARCH_ENABLED?.toLowerCase() !== "false";
+
+if (!isElasticsearchEnabled) {
+  console.log("ℹ️ Elasticsearch is disabled");
+}
+
 // ================== CONFIG ==================
 const ELASTIC_PROTOCOL = process.env.ELASTIC_PROTOCOL || "https";
 const ELASTIC_HOST = process.env.ELASTIC_HOST || "127.0.0.1";
@@ -14,11 +21,15 @@ const ELASTIC_PASSWORD = process.env.ELASTIC_PASSWORD;
 const CA_PATH = process.env.ELASTICSEARCH_CA_PATH || "";
 
 // ================== VALIDATION ==================
-if (!ELASTIC_PASSWORD) {
+if (isElasticsearchEnabled && !ELASTIC_PASSWORD) {
   throw new Error("❌ ELASTIC_PASSWORD environment variable is not set");
 }
 
-if (ELASTIC_PROTOCOL === "https" && !fs.existsSync(CA_PATH)) {
+if (
+  isElasticsearchEnabled &&
+  ELASTIC_PROTOCOL === "https" &&
+  !fs.existsSync(CA_PATH)
+) {
   throw new Error(`❌ Elasticsearch CA certificate not found at ${CA_PATH}`);
 }
 
@@ -41,7 +52,7 @@ const clientOptions = {
 };
 
 // Enable TLS only when using HTTPS
-if (ELASTIC_PROTOCOL === "https") {
+if (isElasticsearchEnabled && ELASTIC_PROTOCOL === "https") {
   clientOptions.tls = {
     ca: fs.readFileSync(CA_PATH),
     rejectUnauthorized: true,
@@ -49,23 +60,29 @@ if (ELASTIC_PROTOCOL === "https") {
 }
 
 // ================== CLIENT ==================
-export const client = new Client(clientOptions);
+export const client = isElasticsearchEnabled
+  ? new Client(clientOptions)
+  : null;
 
 // ================== CONNECTION TEST ==================
-(async () => {
-  try {
-    await client.ping();
-    console.log(
-      `✅ Elasticsearch connected (${ELASTIC_PROTOCOL.toUpperCase()})`,
-    );
-  } catch (err) {
-    console.error("❌ Elasticsearch connection failed");
-    console.error(err.meta?.body || err.message);
-  }
-})();
+if (client) {
+  (async () => {
+    try {
+      await client.ping();
+      console.log(
+        `✅ Elasticsearch connected (${ELASTIC_PROTOCOL.toUpperCase()})`,
+      );
+    } catch (err) {
+      console.error("❌ Elasticsearch connection failed");
+      console.error(err.meta?.body || err.message);
+    }
+  })();
+}
 
 // ================== ENSURE INDEX EXISTS ==================
 export async function ensureProfilesIndex() {
+  if (!client) return;
+
   const indexName = "profiles";
 
   const exists = await client.indices.exists({ index: indexName });

@@ -1,56 +1,14 @@
 import mongoose from "mongoose";
-import { Client } from "@elastic/elasticsearch";
-import fs from "fs";
 
 import Profile from "../models/profile.js";
+import {
+  client,
+  isElasticsearchEnabled,
+} from "../services/elasticsearch.js";
 import { pathToFileURL } from "url";
-
-// ================== CONFIG ==================
-// Default to http for local dev unless overridden
-const ELASTIC_PROTOCOL = process.env.ELASTIC_PROTOCOL || "http";
-const ELASTIC_HOST = process.env.ELASTIC_HOST || "127.0.0.1";
-const ELASTIC_PORT = process.env.ELASTIC_PORT || "9200";
-const ELASTIC_USERNAME = process.env.ELASTIC_USERNAME || "elastic";
-const ELASTIC_PASSWORD = process.env.ELASTIC_PASSWORD;
-
-// CA path only needed for HTTPS
-const CA_PATH = process.env.ELASTICSEARCH_CA_PATH || "";
 
 // MongoDB URI
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/socially";
-
-// ================== VALIDATION ==================
-if (!ELASTIC_PASSWORD) {
-  throw new Error("❌ ELASTIC_PASSWORD is not set");
-}
-
-if (ELASTIC_PROTOCOL === "https" && !fs.existsSync(CA_PATH)) {
-  throw new Error(`❌ Elasticsearch CA not found at ${CA_PATH}`);
-}
-
-// ================== CLIENT ==================
-const clientOptions = {
-  node: `${ELASTIC_PROTOCOL}://${ELASTIC_HOST}:${ELASTIC_PORT}`,
-
-  auth: {
-    username: ELASTIC_USERNAME,
-    password: ELASTIC_PASSWORD,
-  },
-
-  sniffOnStart: false,
-  sniffInterval: false,
-  maxRetries: 5,
-  requestTimeout: 30000,
-};
-
-if (ELASTIC_PROTOCOL === "https") {
-  clientOptions.tls = {
-    ca: fs.readFileSync(CA_PATH),
-    rejectUnauthorized: true,
-  };
-}
-
-const client = new Client(clientOptions);
 
 // ================== INDEX CONFIG ==================
 const INDEX_NAME = "profiles";
@@ -107,6 +65,8 @@ const indexProfiles = async () => {
 
 // ================== INITIALIZER ==================
 export const initializeElasticsearch = async (reindex = false) => {
+  if (!isElasticsearchEnabled) return;
+
   try {
     const exists = await client.indices.exists({ index: INDEX_NAME });
 
@@ -137,6 +97,11 @@ const entryFile = process.argv[1] ? pathToFileURL(process.argv[1]).href : null;
 if (entryFile && import.meta.url === entryFile) {
   (async () => {
     try {
+      if (!isElasticsearchEnabled) {
+        console.log("ℹ️ Elasticsearch is disabled; skipping reindexing");
+        process.exit(0);
+      }
+
       await mongoose.connect(MONGO_URI);
       console.log("✅ MongoDB connected");
 

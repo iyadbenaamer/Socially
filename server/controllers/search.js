@@ -1,5 +1,8 @@
 import Profile from "../models/profile.js";
-import { client } from "../services/elasticsearch.js";
+import {
+  client,
+  isElasticsearchEnabled,
+} from "../services/elasticsearch.js";
 import { handleError } from "../utils/errorHandler.js";
 import { Types } from "mongoose";
 
@@ -211,6 +214,8 @@ export const search = async (req, res) => {
         .json({ message: "Search query exceeds maximum length" });
     }
 
+    if (!isElasticsearchEnabled) return res.json([]);
+
     const searchResults = await client.search({
       index: INDEX_NAME,
       query: buildSearchQuery(query),
@@ -239,6 +244,8 @@ export const autocomplete = async (req, res) => {
         .status(400)
         .json({ message: "Autocomplete text exceeds maximum length" });
     }
+
+    if (!isElasticsearchEnabled) return res.json([]);
 
     const searchResults = await client.search({
       index: INDEX_NAME,
